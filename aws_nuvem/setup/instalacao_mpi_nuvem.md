@@ -88,3 +88,6 @@ Execute através dos nós, forçando o tráfego pela rede entre eles:
 ```Bash
 mpirun --hostfile hostfile --map-by node -np 4 ./hello_world
 ```
+Nota: Se a execução travar em ambientes de nuvem, exclua a interface de loopback anexando --mca btl_tcp_if_exclude lo --mca oob_tcp_if_exclude lo ao seu comando.
+
+Se a saída exibir as mensagens padrão de "hello" contendo os diferentes números de rank vinculados com sucesso aos seus respectivos hostnames (server1, server2, etc.), o ambiente do seu cluster está validado e pronto para os benchmarks.
