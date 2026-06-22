@@ -4,7 +4,7 @@ Este repositório contém os códigos, scripts de automação e dados experiment
 
 O objetivo deste projeto de Iniciação Científica da UNIVESP é fornecer ambientes práticos e acessíveis para o ensino de sistemas distribuídos em cursos a distância, permitindo que os alunos observem a comunicação e o compartilhamento de recursos de forma reproduzível.
 
----
+-----------------------------------------------------
 
 ## Estrutura do Repositório
 
@@ -14,7 +14,7 @@ O projeto está dividido em dois ambientes de experimentação, conforme descrit
 2. **[Ambiente em Nuvem (AWS)](aws_nuvem/README.md):** Contém as diretrizes para configuração de instâncias EC2 em regiões distintas, regras de rede (VPC/Firewall) e execução do teste de comunicação ponto-a-ponto (*latência*).
 3. **[Códigos Modificados](codigos_modificados/):** Contém os códigos-fonte C dos benchmarks OSU utilizados nos experimentos, com pequenas adaptações para identificação dos nós.
 
----
+-----------------------------------------------------
 
 ## Resumo dos Ambientes
 
@@ -22,10 +22,10 @@ A tabela abaixo resume as especificações utilizadas nos dois ambientes para ga
 
 | Recurso | VirtualBox (Local) | AWS (Nuvem) |
 | :--- | :--- | :--- |
-| **Quantidade** | 4 máquinas virtuais | 2 instâncias |
+| **Quantidade** | 4 máquinas virtuais | 2 máquinas virtuais |
 | **Processador** | 1 vCPU por máquina | 1 vCPU por máquina |
 | **Memória** | 1 GB por máquina | 1 GB por máquina |
-| **Sistema Operacional** | Ubuntu 22.04 LTS | Ubuntu 22.04 LTS |
+| **Sistema Operacional** | Ubuntu 22.04 Server | Ubuntu 22.04 Server |
 
 ---
 
