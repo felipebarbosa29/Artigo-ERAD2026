@@ -1,0 +1,52 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# Vagrantfile para o Laboratório Didático de Computação Distribuída
+# Cria 4 máquinas virtuais Ubuntu 22.04 para experimentos com MPI
+
+Vagrant.configure("2") do |config|
+  # Usar a imagem oficial do Ubuntu 22.04 LTS
+  config.vm.box = "ubuntu/jammy64"
+
+  # Definir a quantidade de nós do cluster
+  N = 4
+
+  (1..N).each do |i|
+    config.vm.define "node#{i}" do |node|
+      # Configuração de rede interna (host-only) para comunicação isolada
+      node.vm.network "private_network", ip: "192.168.56.10#{i}"
+      
+      # Nome do host
+      node.vm.hostname = "node#{i}"
+
+      # Configuração de recursos do VirtualBox
+      node.vm.provider "virtualbox" do |vb|
+        vb.name = "erad_node#{i}"
+        vb.memory = "1024" # 1 GB de RAM conforme artigo
+        vb.cpus = 1        # 1 vCPU conforme artigo
+        # Otimizações de rede
+        vb.customize ["modifyvm", :id, "--nictype1", "virtio"]
+        vb.customize ["modifyvm", :id, "--nictype2", "virtio"]
+      end
+
+      # Script de provisionamento básico (instalação do MPI e ferramentas)
+      node.vm.provision "shell", inline: <<-SHELL
+        echo "Atualizando pacotes e instalando dependências..."
+        apt-get update
+        apt-get install -y openmpi-bin openmpi-common libopenmpi-dev build-essential gcc make
+        
+        echo "Configurando arquivo hosts..."
+        cat <<EOF > /etc/hosts_mpi
+127.0.0.1 localhost
+192.168.56.101 node1
+192.168.56.102 node2
+192.168.56.103 node3
+192.168.56.104 node4
+EOF
+        cat /etc/hosts_mpi >> /etc/hosts
+        
+        echo "Configuração do node#{i} concluída."
+      SHELL
+    end
+  end
+end
