@@ -39,6 +39,6 @@ mpirun --hostfile hostfile_aws \
 
 O gráfico abaixo, correspondente à Figura 2 do artigo, ilustra a diferença significativa de latência entre a comunicação local (dentro da mesma instância na Virgínia) e a comunicação inter-regional (entre Virgínia e Oregon).
 
-![Latência AWS: Local vs. Inter-regional](graficos/chart_osu_latency_aws.png)
+![Latência AWS: Local vs. Inter-regional](graficos/grafico_latencia_aws.png)
 
 Para acessar os dados brutos obtidos durante os testes, consulte a pasta `dados/`.
