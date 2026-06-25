@@ -8,7 +8,7 @@ Para replicar os resultados do artigo, é necessário criar instâncias no níve
 
 **Especificações das Instâncias:**
 - **Tipo:** `t2.micro` (1 vCPU, 1 GB de RAM).
-- **Sistema Operacional:** Ubuntu 22.04 LTS.
+- **Sistema Operacional:** Ubuntu 22.04 Server
 - **Localização:** Uma instância na região da Virgínia do Norte (`us-east-1`) e outra no Oregon (`us-west-2`).
 
 **Configurações de Rede e Segurança:**
