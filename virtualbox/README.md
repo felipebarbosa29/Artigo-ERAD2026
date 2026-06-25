@@ -44,7 +44,6 @@ O experimento relatado no artigo utiliza o benchmark `osu_bcast` para analisar o
 
 O gráfico abaixo, apresentado no artigo, ilustra o aumento do tempo de envio de dados conforme o número de processos simultâneos aumenta, demonstrando o impacto da disputa por recursos no processador do hospedeiro.
 
-![Tempo de envio (broadcast) no cluster VirtualBox](graficos/grafico_latencia_aws.png)
-*(Nota: O arquivo de imagem atual no repositório tem o nome trocado, mas representa os dados do VirtualBox).*
+![Tempo de envio (broadcast) no cluster VirtualBox](graficos/chart_osu_bcast.png)
 
 Para detalhes dos dados brutos e scripts de plotagem, consulte as pastas `dados/` e `scripts/`.
