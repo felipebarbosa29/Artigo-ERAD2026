@@ -33,7 +33,18 @@ Vagrant.configure("2") do |config|
       node.vm.provision "shell", inline: <<-SHELL
         echo "Atualizando pacotes e instalando dependências..."
         apt-get update
-        apt-get install -y openmpi-bin openmpi-common libopenmpi-dev build-essential gcc make
+        apt-get install -y openmpi-bin openmpi-common libopenmpi-dev build-essential gcc make wget tar
+
+        echo "Baixando e compilando OSU Micro-Benchmarks..."
+        cd /tmp
+        wget --no-check-certificate https://mvapich.cse.ohio-state.edu/download/mvapich/osu-micro-benchmarks-7.3.tar.gz
+        tar -xzf osu-micro-benchmarks-7.3.tar.gz
+        cd osu-micro-benchmarks-7.3
+        ./configure CC=mpicc CXX=mpicxx --prefix=/usr/local/osu --quiet
+        make -j$(nproc) > /dev/null 2>&1
+        make install > /dev/null 2>&1
+        echo "OSU Micro-Benchmarks compilados e instalados em /usr/local/osu"
+
         
         echo "Configurando arquivo hosts..."
         cat <<EOF > /etc/hosts_mpi
@@ -46,6 +57,16 @@ EOF
         cat /etc/hosts_mpi >> /etc/hosts
         
         echo "Configuração do node#{i} concluída."
+
+        echo "Gerando hostfile MPI..."
+        cat > /home/vagrant/hostfile <<-EOF
+192.168.56.101 node1
+192.168.56.102 node2
+192.168.56.103 node3
+192.168.56.104 node4
+EOF
+        chown vagrant:vagrant /home/vagrant/hostfile
+
       SHELL
     end
   end

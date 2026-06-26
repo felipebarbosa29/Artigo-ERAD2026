@@ -1,6 +1,6 @@
-# Infraestrutura como Código: Automação do Cluster (Vagrant)
+# IaC: Automação de Cluster com Vagrant
 
-Este guia descreve a utilização do Vagrant para a criação automatizada e reprodutível do cluster de computação distribuída. A configuração manual de clusters MPI é suscetível a erros de rede e inconsistências de bibliotecas; o uso de Infraestrutura como Código (IaC) mitiga esses riscos ao garantir que todos os nós possuam o mesmo sistema operacional, limites de recursos e dependências do OpenMPI.
+Este guia descreve o uso do Vagrant para a criação automatizada e reprodutível do cluster de computação distribuída. A configuração manual de clusters MPI é suscetível a erros de rede e inconsistências de bibliotecas; o uso de Infraestrutura como Código (IaC) mitiga esses riscos, garantindo que todos os nós possuam o mesmo sistema operacional, limites de recursos e dependências do OpenMPI.
 
 ## 1. Pré-requisitos (Hospedeiro Windows)
 O ambiente requer o Oracle VirtualBox e o HashiCorp Vagrant instalados.
@@ -12,7 +12,7 @@ winget install --id Hashicorp.Vagrant
 *Nota: Pode ser necessário reiniciar o sistema para atualizar o PATH.*
 
 ## 2. Script de Automação (Vagrantfile)
-O arquivo `Vagrantfile` define a topologia do cluster de forma dinâmica. O script abaixo provisiona 4 nós, atribui IPs sequenciais e realiza a compilação nativa dos benchmarks antes do acesso inicial do usuário.
+O `Vagrantfile` define a topologia do cluster de forma dinâmica. O script abaixo provisiona 4 nós, atribui IPs sequenciais e realiza a compilação nativa dos benchmarks antes do acesso inicial do usuário.
 
 ```ruby
 # -*- mode: ruby -*-
@@ -78,7 +78,7 @@ end
 ```
 
 ## 3. Execução e Validação
-Para instanciar o cluster, execute no terminal do hospedeiro:
+Para instanciar o cluster, garanta que esteja no diretório onde está o arquivo Vagrantfile e depois execute:
 ```bash
 vagrant up
 ```
@@ -92,7 +92,7 @@ mpirun --hostfile ~/hostfile -np 4 hostname
 ## 4. Análise Técnica de Recursos
 
 ### 4.1. Clones Vinculados (Linked Clones)
-A configuração `vb.linked_clone = true` é essencial para operar nos limites de 8 GB de RAM e armazenamento SSD limitado. O VirtualBox utiliza uma imagem base de leitura e cria discos diferenciais para cada nó. Isso reduz o consumo de armazenamento em aproximadamente 75% e acelera significativamente o tempo de boot do cluster.
+A configuração `vb.linked_clone = true` permite que o Vagrant controle os limites de 8 GB de RAM e armazenamento SSD. O VirtualBox utiliza uma imagem base de leitura e cria discos diferenciais para cada nó. Isso reduz o consumo de armazenamento em aproximadamente 75% e acelera o tempo de boot do cluster.
 
 ### 4.2. Isolamento de Rede e I/O
-Embora o Vagrant utilize pastas compartilhadas (`/vagrant`), a execução dos benchmarks é realizada em diretórios isolados dentro da VM. Isso garante que as métricas de latência reflitam o tráfego real pela pilha TCP/IP virtualizada, evitando que o MPI utilize o sistema de arquivos compartilhado como atalho de comunicação, o que mascararia os resultados reais.
+Embora o Vagrant utilize pastas compartilhadas (`/vagrant`), a execução dos benchmarks é realizada em diretórios isolados dentro da VM. Isso garante que as métricas de latência reflitam o tráfego através da pilha TCP/IP virtualizada, evitando que o MPI utilize o sistema de arquivos compartilhado como um atalho de comunicação.
