@@ -1,4 +1,3 @@
-```markdown
 # Ambiente Local (VirtualBox)
 
 Este diretório contém os recursos necessários para provisionar e testar um cluster local utilizando o **VirtualBox** e o **Vagrant**, conforme descrito no artigo.
