@@ -84,7 +84,7 @@ A organização dos resultados experimentais e ferramentas de visualização é 
 - **Pasta `scripts/`**: Contém o script Python `plot_latencia.py`. 
 
 ### Geração dos Gráficos
-Para assegurar a exatidão e a reprodutibilidade das figuras apresentadas no artigo, o script de plotagem utiliza os dados consolidados localmente (*hardcoded*).
+Para assegurar o experimento apresentado no artigo, o script de plotagem utiliza os dados consolidados localmente (*hardcoded*).
 
 1. No seu computador hospedeiro (fora das VMs), navegue até a pasta de scripts:
    ```bash
