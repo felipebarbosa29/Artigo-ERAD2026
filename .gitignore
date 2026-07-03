@@ -1,0 +1,34 @@
+# --- Binários e Compilação ---
+*.o
+*.out
+# Executáveis específicos do benchmark (se compilados localmente)
+osu_bcast
+osu_latency
+
+# --- Arquivos de Sistema e Lixo ---
+*.zip
+*.tar.gz
+*.7z
+# Arquivos específicos do Windows (Metadados de download)
+*:Zone.Identifier
+*Zone.Identifier
+# macOS
+.DS_Store
+Thumbs.db
+
+# --- Ambientes Virtuais e IDEs ---
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# --- Vagrant (Logs e Estado) ---
+.vagrant/
+vagrant-*.log
+
+# --- Python (Gráficos) ---
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
