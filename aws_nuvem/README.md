@@ -18,7 +18,14 @@ Embora o termo VPC seja proprietário da AWS, o conceito de rede lógica isolada
 - **Microsoft Azure:** VNet (*Virtual Network*).
 - **Google Cloud:** VPC.
 
-Para viabilizar a comunicação inter-regional via rede privada, deve-se configurar o **VPC Peering** (ou equivalente) e ajustar as regras de **Firewall (*Security Groups*)** para permitir o tráfego TCP nas portas utilizadas pelo MPI, além do acesso via chaves SSH para autenticação sem senha entre os nós.
+Para viabilizar a comunicação inter-regional via rede privada, utiliza-se o **VPC Peering**. Tecnicamente, este recurso estabelece uma conexão de roteamento entre duas VPCs distintas, permitindo que as instâncias troquem dados utilizando endereços IP privados. Ao evitar o tráfego pela internet pública, a comunicação utiliza o *backbone* de fibra óptica do provedor, o que é crítico para minimizar o *jitter* e garantir a estabilidade das medições de latência em sistemas distribuídos.
+
+Em outros provedores, essa interconexão é implementada de forma análoga:
+- **Oracle Cloud (OCI):** *Remote VCN Peering* via *Dynamic Routing Gateways* (DRG).
+- **Microsoft Azure:** *Global VNet Peering*.
+- **Google Cloud:** *VPC Network Peering*.
+
+Além da interconexão lógica, é necessário ajustar as regras de **Firewall (*Security Groups*)** para permitir o tráfego TCP nas portas efêmeras utilizadas pelo MPI, além de configurar a autenticação via chaves SSH assimétricas para permitir a execução remota sem intervenção manual.
 
 ### 3.2. Cenário de Execução: Comunicação Ponto-a-Ponto (Latência)
 
