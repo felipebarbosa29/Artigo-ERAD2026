@@ -51,8 +51,7 @@ Os scripts Python para plotagem dos gráficos estão localizados na pasta `scrip
 
 O gráfico abaixo, apresentado no artigo, ilustra o aumento do tempo de envio de dados conforme o número de processos simultâneos aumenta, demonstrando a disputa por recursos no processador do hospedeiro.
 
-![Tempo de envio (broadcast) no cluster VirtualBox](https://private-us-east-1.manuscdn.com/sessionFile/tLw70lW5nGNp0ZMx8TCeU6/sandbox/3180r09k4EjIXRkpGJwCtD-images_1782492208703_na1fn_L2hvbWUvdWJ1bnR1L0FydGlnby1FUkFEMjAyNi92aXJ0dWFsYm94L2dyYWZpY29zL2dyYWZpY29fbGF0ZW5jaWFfYXdz.png?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvdEx3NzBsVzVuR05wMFpNeDhUQ2VVNi9zYW5kYm94LzMxODByMDlrNEVqSVhSa3BHSndDdEQtaW1hZ2VzXzE3ODI0OTIyMDg3MDNfbmExZm5fTDJodmJXVXZkV0oxYm5SMUwwRnlkR2xuYnkxRlVrRkVNakF5Tmk5MmFYSjBkV0ZzWW05NEwyZHlZV1pwWTI5ekwyZHlZV1pwWTI5ZmJHRjBaVzVqYVdGZllYZHoucG5nIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzk4NzYxNjAwfX19XX0_&Key-Pair-Id=K2HSFNDJXOU9YS&Signature=gGoX1VgbpfJgIvp17kgFUAAZobo4GsURT8dDi8r7JVHGToSpL47nhYgfOY-RvZom11NQfRf2W7diUABJfaVm7Ro75YZiYbHvOxcP2TuVWK3kbMGE1HGyphikZXZvTqfNczoMR9UhGQEtlEkP2mFB-j8Yvqfa6hoHFBYDrgrPhZmxSsVVHuyU5WE9N~iJHn~2XoO7SHsv0Cx2qqRbd60TThkB7aM1v1M7zK8IcSHRPMgO2B7OGshs1yv6PnwduqiP77-Vw5jgCefwlfY98NEyleLf16QsoprF3~D5jFKBepJwEnsbl9gdlfm3gJ1MZaPuEYWWI3gwb~GgkfKtzvLyVQ__)
-*(Nota: O arquivo de imagem atual no repositório tem o nome trocado, mas representa os dados do VirtualBox).*
+![Tempo de envio (broadcast) no cluster VirtualBox](graficos/chart_osu_bcast.png)
 
 Para detalhes dos dados brutos e scripts de plotagem, consulte as pastas `dados/` e `scripts/`.
 ```

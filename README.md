@@ -18,7 +18,7 @@ O projeto está dividido em dois ambientes de experimentação, conforme descrit
 
 ## Resumo dos Ambientes
 
-A tabela abaixo resume as especificações utilizadas nos dois ambientes para garantir a reprodutibilidade dos experimentos descritos no artigo.
+As tabelas abaixo resumem as especificações utilizadas nos dois ambientes e os requisitos de sistema estimados para o laboratório local, garantindo a reprodutibilidade dos experimentos descritos no artigo.
 
 | Recurso | VirtualBox (Local) | AWS (Nuvem) |
 | :--- | :--- | :--- |
@@ -26,6 +26,19 @@ A tabela abaixo resume as especificações utilizadas nos dois ambientes para ga
 | **Processador** | 1 vCPU por máquina | 1 vCPU por máquina |
 | **Memória** | 1 GB por máquina | 1 GB por máquina |
 | **Sistema Operacional** | Ubuntu 22.04 Server | Ubuntu 22.04 Server |
+
+### Requisitos de Sistema para o Laboratório (VirtualBox)
+
+A Tabela 2 mostra o consumo de memória RAM e disco do Laboratório. O laboratório foi montado usando o VirtualBox (versão 7.0, instalado no Windows 11). O consumo real pode variar conforme os processos em segundo plano e a carga de trabalho do sistema operacional hospedeiro.
+
+| Componente | Consumo (GB) | Disco (GB) |
+| :--- | :--- | :--- |
+| **Windows 11 (base)** | 4,0 | 64,0 |
+| **4 VMs Ubuntu (1 GB cada)** | 3,5 – 4,0 | 37,0 |
+| **Gerenciamento VBox/Rede** | 0,5 | 0,2-0,3 |
+| **Total Estimado** | **8,0 – 8,5** | **101,2 – 101,3** |
+
+*O laboratório foi criado em uma máquina com 32 GB de memória RAM, um SSD de 500 GB, um processador Intel Core i7-1165G7 e executando o sistema operacional Windows 11.*
 
 ---
 
