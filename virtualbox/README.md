@@ -4,9 +4,22 @@ Este diretório contém os recursos necessários para provisionar e testar um cl
 
 ## Requisitos de Sistema
 
-Para replicar este laboratório, o computador hospedeiro deve possuir:
-- **Memória RAM:** Mínimo de 8 GB (O cluster consumirá aproximadamente 4,5 GB, incluindo o gerenciamento do VirtualBox).
-- **Software:** VirtualBox (versão 7.0 ou superior) e Vagrant instalados.
+Para a replicação dos experimentos em ambiente local, é necessário um computador hospedeiro com as seguintes características:
+
+- **Sistema Operacional:** Windows 11
+- **Processador:** Intel Core i7
+- **Memória RAM:** 32 GB
+- **Armazenamento:** SSD de 500 GB
+- **Software:** VirtualBox (versão 7.0) e Vagrant instalados.
+
+A Tabela 2, extraída do artigo, detalha o consumo estimado de recursos para o ambiente de virtualização:
+
+| Componente            | Consumo (GB) | Disco (GB)    |
+| :-------------------- | :----------- | :------------ |
+| Windows 11 (base)     | 4,0          | 64,0          |
+| 4 VMs Ubuntu (1 GB cada) | 3,5 – 4,0    | 37,0          |
+| Gerenciamento VBox/Rede | 0,5          | 0,2 – 0,3     |
+| **Total Estimado**    | **8,0 – 8,5**| **101,2 – 101,3** |
 
 ## 1. Provisionamento do Cluster
 
@@ -51,7 +64,7 @@ Os scripts Python para plotagem dos gráficos estão localizados na pasta `scrip
 
 O gráfico abaixo, apresentado no artigo, ilustra o aumento do tempo de envio de dados conforme o número de processos simultâneos aumenta, demonstrando a disputa por recursos no processador do hospedeiro.
 
-![Tempo de envio (broadcast) no cluster VirtualBox](graficos/chart_osu_bcast.png)
+![Tempo de envio (broadcast) no cluster VirtualBox](https://private-us-east-1.manuscdn.com/sessionFile/tLw70lW5nGNp0ZMx8TCeU6/sandbox/0avdAQ0Fpxlt6SxNLT67X6-images_1783089271115_na1fn_L2hvbWUvdWJ1bnR1L0FydGlnby1FUkFEMjAyNl93b3JraW5nL3ZpcnR1YWxib3gvZ3JhZmljb3MvY2hhcnRfb3N1X2JjYXN0.png?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvdEx3NzBsVzVuR05wMFpNeDhUQ2VVNi9zYW5kYm94LzBhdmRBUTBGcHhsdDZTeE5MVDY3WDYtaW1hZ2VzXzE3ODMwODkyNzExMTVfbmExZm5fTDJodmJXVXZkV0oxYm5SMUwwRnlkR2xuYnkxRlVrRkVNakF5Tmw5M2IzSnJhVzVuTDNacGNuUjFZV3hpYjNndlozSmhabWxqYjNNdlkyaGhjblJmYjNOMVgySmpZWE4wLnBuZyIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTgzMDI5NzYwMH19fV19&Key-Pair-Id=K2HSFNDJXOU9YS&Signature=lGNNL~ytAckqniCeYTFyO2A3A6GBcKxOwQsX~TF8IJ7V2j3y4lqwqzhugggFu6xr5g5AtVs20tM5~6xbOsBR-xN5aDKtg1Bw1yNDfiww~3IZzPjxTpRX5x5fmTdtC9xHkzm9jemBhDken901ZRNLIbPZrZS6Lgf753ExztVZNafKSTi6llsPPSLBPY8-I9kZLGV2jbVabSGzctUy~YGw50ynMBtNtQuCif5BaJCkjdRNcmtWNnFQZ4JSpanO3VRIfnKNRE7Ww4BhbthdZ92j~-lKl9AGte5YMbkqLo-Nz1b8iVxiBQ~WVQAilUXCpWTRnzXGuzjV1qeir-41l9lDAw__)
 
 Para detalhes dos dados brutos e scripts de plotagem, consulte as pastas `dados/` e `scripts/`.
 ```
