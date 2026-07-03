@@ -104,7 +104,7 @@ O benchmark foi executado com cargas de **4, 8 e 16 processos**, distribuídos i
 
 A Figura 1 (abaixo) apresenta os resultados deste experimento:
 
-![Figura 1: Latência de Broadcast no Cluster VirtualBox]![Figura 1: Experimento Broadcast no Cluster VirtualBox](graficos/chart_osu_bcast.png)
+![Figura 1: Experimento Broadcast no Cluster VirtualBox](graficos/chart_osu_bcast.png)
 ### Análise Técnica
 Observa-se que o tempo de execução tende a aumentar proporcionalmente ao tamanho da mensagem e ao número de processos ativos. Contudo, foram identificadas pequenas anomalias (ex: mensagens de 256 B com 4 processos), atribuídas a processos concorrentes no sistema operacional hospedeiro, o que reforça a necessidade de uma análise mais detalhada.
 
