@@ -1,4 +1,3 @@
-```markdown
 # Ambiente em Nuvem (AWS)
 
 Este diretório detalha as configurações e os comandos necessários para replicar o laboratório em nuvem utilizando a **Amazon Web Services (AWS)**. O foco deste ambiente é a análise da latência em comunicação ponto-a-ponto entre instâncias geograficamente distantes.
