@@ -2,17 +2,27 @@
 
 Este diretório detalha as configurações e os comandos necessários para replicar o laboratório em nuvem utilizando a **Amazon Web Services (AWS)**.
 
-## 1. Configuração da Infraestrutura
+## 1. Provisionamento da Infraestrutura
 
-Para replicar os resultados do artigo, é necessário criar instâncias no nível gratuito (*Free Tier*) da AWS.
+A replicação dos experimentos em nuvem exige a alocação de instâncias computacionais distribuídas geograficamente. Para manter a fidelidade aos dados do artigo, as instâncias devem ser provisionadas com as seguintes especificações técnicas:
 
-**Especificações das Instâncias:**
-- **Tipo:** `t2.micro` (1 vCPU, 1 GB de RAM).
-- **Sistema Operacional:** Ubuntu 22.04 LTS.
-- **Localização:** Uma instância na região da Virgínia do Norte (`us-east-1`) e outra no Oregon (`us-west-2`).
+### Especificações das Instâncias
+- **Tipo Recomendado:** `t2.micro` (1 vCPU, 1 GB RAM). 
+  *   *Nota: Este tipo de instância é elegível ao **Free Tier** da AWS, mas instâncias de maior performance (famílias C ou M) podem ser utilizadas caso o usuário opte por planos pagos para reduzir o jitter de rede.*
+- **Sistema Operacional:** Ubuntu 22.04 LTS (HVM).
+- **Distribuição Geográfica:** 
+  - **Instância A (Local):** Região `us-east-1` (N. Virginia).
+  - **Instância B (Remota):** Região `us-west-2` (Oregon).
+
+A escolha por essas regiões específicas visa maximizar a distância física dentro da infraestrutura da AWS, permitindo a medição clara da latência inter-regional.
 
 **Configurações de Rede e Segurança:**
-1. **Isolamento Lógico:** Utilize as VPCs padrão ou crie VPCs interconectadas (VPC Peering) se desejar comunicação exclusiva via rede privada.
+1. **Isolamento Lógico (VPC):** A *Virtual Private Cloud* (VPC) é o serviço que permite criar uma rede virtual isolada e logicamente separada para seus recursos na nuvem. Embora o termo VPC seja específico da AWS, o conceito de rede virtual isolada é universal entre provedores:
+    - **Oracle Cloud (OCI):** Chamado de **VCN** (*Virtual Cloud Network*).
+    - **Microsoft Azure:** Chamado de **VNet** (*Virtual Network*).
+    - **Google Cloud (GCP):** Também utiliza o termo **VPC**.
+    
+    Para este laboratório, utilize as redes padrão de cada região ou configure um **VPC Peering** para permitir que as instâncias em regiões distintas (Virgínia e Oregon) se comuniquem via IPs privados, simulando uma rede local distribuída.
 2. **Firewall (Security Groups):** Libere o tráfego TCP para as portas utilizadas pelo MPI entre os IPs das duas instâncias, além da porta 22 para acesso SSH.
 3. **Chaves SSH:** Configure a autenticação por chaves assimétricas para permitir que o processo MPI em uma instância acesse a outra sem exigir senha.
 
