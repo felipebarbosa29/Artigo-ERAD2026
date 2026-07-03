@@ -1,26 +1,8 @@
 # Resultados Experimentais: VirtualBox (Local)
 
-Este documento consolida as medições obtidas com a suíte OSU Micro-Benchmarks v7.3 no cluster local virtualizado.
+Este documento consolida a medição obtida com a suíte OSU Micro-Benchmarks v7.3 no cluster local virtualizado.
 
-## 1. Latência Ponto-a-Ponto (osu_latency)
-**Configuração:** 2 processos (NP=2), mapeados em nós distintos (`server1` e `server2`).
-
-| Tamanho (Bytes) | Latência (µs) |
-| :--- | :--- |
-| 1 | 364,80 |
-| 16 | 450,60 |
-| 256 | 393,10 |
-| 1024 | 375,66 |
-| 4096 | 528,95 |
-| 65536 | 1908,21 |
-| 1048576 | 5416,08 |
-| 4194304 | 15398,73 |
-
-**Observação:** A latência média para pacotes pequenos (~360 µs)
-
----
-
-## 2. Comunicação Coletiva: Broadcast (osu_bcast)
+## 1. Comunicação Coletiva: Broadcast (osu_bcast)
 **Configuração:** Root no `server1`. Escalonamento em 4, 8 e 16 processos distribuídos nos 4 nós.
 
 | Tamanho (Bytes) | NP=4 (µs) | NP=8 (µs) | NP=16 (µs) |

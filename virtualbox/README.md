@@ -75,16 +75,16 @@ Para garantir a precisão dos resultados e a correta comunicação entre os nós
 
 ## 3. Processamento de Dados e Visualização
 
-A visualização dos resultados é realizada através de scripts Python localizados no diretório `scripts/`. Estes scripts foram desenvolvidos para processar os dados brutos coletados durante as execuções do cluster local.
+A visualização dos resultados é realizada através de script Python localizado no diretório `scripts/`. Este script foi desenvolvido para processar os dados coletados durante as execuções do cluster local.
 
 ### Estrutura de Dados e Scripts
 A organização dos resultados experimentais e ferramentas de visualização é composta por:
 
-- **Pasta `dados/`**: Contém o arquivo `dados_vbox.md`. Este documento atua como um relatório técnico consolidando os resultados brutos (tabelas de latência) obtidos diretamente do cluster local para consulta e auditoria.
+- **Pasta `dados/`**: Contém o arquivo `dados_vbox.md`. Este documento atua como um relatório técnico consolidando os resultados (tabelas de latência) obtidos diretamente do cluster local para consulta.
 - **Pasta `scripts/`**: Contém o script Python `plot_latencia.py`. 
 
 ### Geração dos Gráficos
-Para assegurar a exatidão e a reprodutibilidade das figuras apresentadas no artigo, o script de plotagem utiliza os dados consolidados internamente (*hardcoded*). Isso elimina inconsistências de formatação e garante que a visualização final corresponda exatamente aos dados validados na pesquisa.
+Para assegurar a exatidão e a reprodutibilidade das figuras apresentadas no artigo, o script de plotagem utiliza os dados consolidados localmente (*hardcoded*).
 
 1. No seu computador hospedeiro (fora das VMs), navegue até a pasta de scripts:
    ```bash
@@ -107,7 +107,7 @@ A Figura 1 (abaixo) apresenta os resultados deste experimento:
 ![Figura 1: Latência de Broadcast no Cluster VirtualBox](https://private-us-east-1.manuscdn.com/sessionFile/tLw70lW5nGNp0ZMx8TCeU6/sandbox/EzJjAtcxUJEmtyGhn71IiH-images_1783093470016_na1fn_L2hvbWUvdWJ1bnR1L0FydGlnby1FUkFEMjAyNl93b3JraW5nL3ZpcnR1YWxib3gvZ3JhZmljb3MvY2hhcnRfb3N1X2JjYXN0.png?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvdEx3NzBsVzVuR05wMFpNeDhUQ2VVNi9zYW5kYm94L0V6SmpBdGN4VUpFbXR5R2huNzFJaUgtaW1hZ2VzXzE3ODMwOTM0NzAwMTZfbmExZm5fTDJodmJXVXZkV0oxYm5SMUwwRnlkR2xuYnkxRlVrRkVNakF5Tmw5M2IzSnJhVzVuTDNacGNuUjFZV3hpYjNndlozSmhabWxqYjNNdlkyaGhjblJmYjNOMVgySmpZWE4wLnBuZyIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTgzMDI5NzYwMH19fV19&Key-Pair-Id=K2HSFNDJXOU9YS&Signature=BlXx1YjxJs5uwzSdoUP~GQX2ddpnFZ7nYrZ2JY3xddv1wPRGYEVxq2joYkut99HIRaAhGR2wXIvp5V4jNyciEZbYitprXEX~t~1oAba8XUhqzXOg~PSQph1irITWhP91QkZTMtqni0tmDkmDAUplwrVS1ZwVX0WCN4MfqFF-dZu3YE9YCX9umh0bNh6Zhwwd-PYXQy9Qa1M-e6aj9jHpDTYwOM-0d6yiJNl0qNNycxiMi9O5jEorKfxV8Bnsqdzijt-82DM2vUcEB5pgFYmWz6DUFLJtveNrLfasmzOMcHDygAEBQ~TiekD13V6lruxfenW4QK9zrhBKH2IMaWHwow__)
 
 ### Análise Técnica
-Observa-se que o tempo de execução tende a aumentar proporcionalmente ao tamanho da mensagem e ao número de processos ativos. Contudo, foram identificadas pequenas anomalias (ex: mensagens de 256 B com 4 processos), atribuídas a processos concorrentes no sistema operacional hospedeiro, o que reforça a necessidade de controle rigoroso do ambiente de virtualização para estudos de alta precisão.
+Observa-se que o tempo de execução tende a aumentar proporcionalmente ao tamanho da mensagem e ao número de processos ativos. Contudo, foram identificadas pequenas anomalias (ex: mensagens de 256 B com 4 processos), atribuídas a processos concorrentes no sistema operacional hospedeiro, o que reforça a necessidade de uma análise mais detalhada.
 
 Para detalhes dos dados brutos e scripts de plotagem, consulte as pastas `dados/` e `scripts/`.
 ```
