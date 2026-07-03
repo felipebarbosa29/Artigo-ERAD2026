@@ -1,39 +1,47 @@
-# Ambiente em Nuvem (AWS)
+# Ambiente na Nuvem (AWS)
 
-Este diretório detalha a metodologia experimental, os fundamentos de networking e os procedimentos técnicos para a replicação do laboratório em nuvem utilizando a **Amazon Web Services (AWS)**.
+Este diretório detalha a montagem, os testes e os resultados do laboratório utilizando a infraestrutura da **Amazon Web Services (AWS)**, conforme descrito no artigo.
 
 ## 3. Ambiente na Nuvem (AWS)
 
-A utilização da nuvem pública neste projeto visa proporcionar um cenário de experimentação distribuída em larga escala, permitindo observar o comportamento de sistemas em redes de longa distância (WAN) sob condições reais de latência e jitter.
+A utilização da nuvem pública visa proporcionar um cenário de experimentação distribuída em larga escala, permitindo observar o comportamento de sistemas em redes de longa distância.
 
-### 3.1. Arquitetura de Rede e Infraestrutura
+### 3.1. Configuração do Ambiente na Nuvem
 
-A base da infraestrutura na AWS reside no isolamento lógico e na topologia de rede. Para garantir a fidelidade dos experimentos, é necessário compreender os componentes de networking utilizados:
+Para a criação das máquinas virtuais na AWS, foi necessária a criação de uma rede interna (**VPC - Virtual Private Cloud**) para garantir o isolamento lógico do ambiente. Este isolamento é necessário tanto para a execução de uma única máquina quanto para a comunicação entre instâncias distintas. No caso de máquinas em regiões distintas, a comunicação entre elas precisou ser configurada.
 
-#### Virtual Private Cloud (VPC)
-A [VPC](https://aws.amazon.com/vpc/) é o alicerce que permite criar uma rede virtual isolada na nuvem. Este isolamento é fundamental para garantir que o tráfego do cluster MPI não sofra interferência externa e que as instâncias possuam endereçamento IP privado consistente.
-- **Conceito Multi-nuvem:** O que a AWS chama de VPC é equivalente à **VCN** (*Virtual Cloud Network*) na Oracle Cloud, à **VNet** (*Virtual Network*) no Azure e à **VPC** no Google Cloud.
+Conforme detalhado no artigo, foram configuradas duas máquinas virtuais (**`t2.micro`**, 1 vCPU e 1 GB de RAM) em regiões distintas dos Estados Unidos:
+- **Instância Mestre:** Localizada no estado da **Virgínia do Norte (`us-east-1`)**.
+- **Instância Remota:** Localizada no estado do **Oregon (`us-west-2`)**.
 
-#### VPC Peering e Roteamento Inter-regional
-Para viabilizar a comunicação entre a instância da **Virgínia do Norte (`us-east-1`)** e a do **Oregon (`us-west-2`)**, distantes aproximadamente 4.000 km, utiliza-se o [VPC Peering](https://docs.aws.amazon.com/vpc/latest/peering/what-is-vpc-peering.html).
-- **Por que usar Peering?** Diferente da comunicação via IP público (que transita pela internet aberta), o Peering estabelece uma conexão de roteamento direta através do *backbone* de fibra óptica global da AWS. Isso reduz drasticamente o *jitter* (variação da latência) e aumenta a previsibilidade das medições.
-- **Equivalências:** *Remote VCN Peering* (OCI), *Global VNet Peering* (Azure) e *VPC Network Peering* (GCP).
+A distância entre essas máquinas é de cerca de **4.000 quilômetros**. Para que elas conseguissem se comunicar, além do isolamento lógico dos ambientes, foram configuradas as regras de segurança (*firewall*) da AWS e o acesso via chaves SSH.
 
-#### Segurança e Firewall (Security Groups)
-Os [Security Groups](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html) atuam como firewalls estatais no nível da instância. Para o funcionamento do OpenMPI, é necessário:
-1. Permitir tráfego TCP nas portas efêmeras entre os IPs privados das instâncias.
-2. Liberar a porta 22 (SSH) para o nó mestre.
-3. Configurar autenticação via chaves SSH assimétricas para permitir o lançamento de processos remotos sem senhas.
+### Topologia de Rede e VPC Peering
+
+A arquitetura de rede deste laboratório foi estruturada sobre duas **VPCs (Virtual Private Clouds)** independentes, alocadas nas regiões da Virgínia (`us-east-1`) e do Oregon (`us-west-2`). Para permitir que estas redes isoladas se comuniquem como se estivessem em uma única rede local, foi configurado um **VPC Peering inter-regional**.
+
+#### Fundamentos Técnicos do Peering
+Diferente de uma conexão via VPN ou Internet pública, o VPC Peering estabelece uma relação de roteamento direta entre as sub-redes das duas redes isoladas. Isso significa que:
+- **Tráfego Privado:** Os dados do OpenMPI trafegam utilizando endereços IP privados, sem serem expostos à internet aberta.
+- **Backbone AWS:** O plano de dados é encapsulado e transmitido através da infraestrutura de fibra óptica global da AWS.
+- **Previsibilidade:** Ao evitar os múltiplos "saltos" (*hops*) e o congestionamento da internet pública, conseguimos mitigar o **Jitter** (variação da latência) e garantir que os resultados do benchmark reflitam a latência física do enlace de longa distância.
+
+#### Implementação Didática (Conceito Multi-nuvem)
+Embora a nomenclatura varie entre os provedores de nuvem, o padrão de design para interconexão de redes privadas geodistribuídas é universal:
+- **AWS:** [VPC Peering](https://docs.aws.amazon.com/vpc/latest/peering/what-is-vpc-peering.html )
+- **Oracle Cloud (OCI):** [Remote VCN Peering](https://docs.aws.amazon.com/iaas/Content/Network/Tasks/remoteVCNpeering.htm ) via *Dynamic Routing Gateways*.
+- **Microsoft Azure:** [Global VNet Peering](https://learn.microsoft.com/en-us/azure/virtual-network/virtual-network-peering-overview ).
+- **Google Cloud (GCP):** [VPC Network Peering](https://cloud.google.com/vpc/docs/vpc-peering ).
 
 ### 3.2. Cenário de Execução: Comunicação Ponto-a-Ponto (Latência)
 
-O experimento utiliza o benchmark **`osu_latency`** sob o modelo *ping-pong*: o processo de origem (rank 0) envia uma mensagem (`MPI_Send`) e o processo de destino (rank 1) a devolve imediatamente (`MPI_Recv`). A latência reportada é a média de **100 iterações** para cada tamanho de mensagem (1B a 1MB).
+Como exemplo de uso do laboratório na nuvem, utilizamos o benchmark **`osu_latency`**, que opera utilizando 2 processos no modelo **"ping-pong"**: um processo envia uma mensagem (`MPI_Send`) e o outro a recebe e devolve(`MPI_Recv`). O benchmark executa essa operação para diferentes tamanhos de mensagem e, para cada tamanho, reporta a média do tempo de transmissão de **100 iterações**.
 
-#### Execução Técnica
-A execução deve ser iniciada a partir da instância na **Virgínia do Norte**. Devido à abstração das interfaces de rede virtualizadas (ENA - *Elastic Network Adapter*), o OpenMPI exige parâmetros de MCA (*Modular Component Architecture*) específicos:
+#### Procedimento de Execução
+A execução deve ser disparada a partir da instância na **Virgínia do Norte**. Tivemos de utilizar os seguintes parâmetros adicionais no `mpirun` para que o sistema identificasse as placas de rede corretamente em ambiente de nuvem:
 
 ```bash
-# Execução a partir da instância us-east-1 (Virgínia)
+# Execução iniciada na instância da Virgínia do Norte
 mpirun --hostfile hostfile_aws \
   --mca pml ob1 \
   --mca btl tcp,self \
@@ -41,19 +49,19 @@ mpirun --hostfile hostfile_aws \
   --map-by node -np 2 ./osu_latency
 ```
 
-**Análise dos Parâmetros:**
-- `--mca pml ob1`: Seleciona a camada de gerenciamento de mensagens ponto-a-ponto padrão para garantir compatibilidade.
-- `--mca btl tcp,self`: Força o uso da pilha TCP para tráfego de rede e *self* para memória compartilhada interna.
-- `--mca btl_tcp_disable_family IPv6`: Desabilita o IPv6. Em redes AWS configuradas apenas com IPv4, isso evita que o MPI tente resolver endereços em uma pilha inexistente, o que causaria timeouts e falhas na inicialização do cluster.
+**Explicação dos Parâmetros:**
+- `--mca pml ob1`: Define a camada de gerenciamento de mensagens ponto-a-ponto.
+- `--mca btl tcp,self`: Especifica o uso da pilha TCP para rede e *self* para comunicação interna.
+- `--mca btl_tcp_disable_family IPv6`: Desabilita o suporte a IPv6, prevenindo falhas de resolução de endereço em VPCs que operam majoritariamente em IPv4.
 
-### 3.3. Resultados e Visualização
+### 3.3. Resultados Experimentais
 
-O estudo compara dois cenários distintos para evidenciar o impacto da distância física no desempenho:
-1. **Local (Intra-região):** Comunicação dentro da mesma instância na Virgínia.
-2. **Distribuído (Inter-regional):** Comunicação entre Virgínia e Oregon.
+Executamos o `osu_latency` em dois cenários diferentes:
+1. **Local:** Utilizando os dois processos em uma mesma máquina, localizada na Virgínia do Norte.
+2. **Distribuído:** Utilizando os dois processos em máquinas distintas, uma na Virgínia e outra no Oregon.
 
-A **Figura 2** (abaixo) demonstra que a latência salta de microsegundos (local) para dezenas de milissegundos (inter-regional), validando a influência do atraso de propagação em redes geodistribuídas.
+A **Figura 2** do artigo ilustra os resultados dessas execuções, comparando a latência local com a latência inter-regional:
 
 ![Figura 2: Latência AWS: Local (Virgínia) vs. Inter-regional (Virgínia-Oregon)](graficos/chart_osu_latency_aws.png)
 
-Para auditoria dos dados brutos e scripts de plotagem, consulte as pastas `dados/` e `scripts/`.
+Para detalhes sobre os dados brutos e scripts de plotagem, consulte as pastas `dados/` e `scripts/`.
