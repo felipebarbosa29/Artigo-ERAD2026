@@ -1,67 +1,57 @@
 # Ambiente em Nuvem (AWS)
 
-Este diretório detalha as configurações e os comandos necessários para replicar o laboratório em nuvem utilizando a **Amazon Web Services (AWS)**.
+Este diretório detalha a metodologia experimental, configurações de infraestrutura e procedimentos de execução para a replicação do laboratório em nuvem utilizando a **Amazon Web Services (AWS)**, conforme descrito no artigo.
 
-## 1. Provisionamento da Infraestrutura
+## 3. Ambiente na Nuvem (AWS)
 
-A replicação dos experimentos em nuvem exige a alocação de instâncias computacionais distribuídas geograficamente. Para manter a fidelidade aos dados do artigo, as instâncias devem ser provisionadas com as seguintes especificações técnicas:
+A utilização da nuvem pública visa proporcionar um cenário de experimentação distribuída em larga escala, permitindo observar o comportamento de sistemas em redes de longa distância (WAN).
 
-### Especificações das Instâncias
-- **Tipo Recomendado:** `t2.micro` (1 vCPU, 1 GB RAM). 
-  *   *Nota: Este tipo de instância é elegível ao **Free Tier** da AWS, mas instâncias de maior performance (famílias C ou M) podem ser utilizadas caso o usuário opte por planos pagos para reduzir o jitter de rede.*
-- **Sistema Operacional:** Ubuntu 22.04 LTS (HVM).
-- **Distribuição Geográfica:** 
-  - **Instância A (Local):** Região `us-east-1` (N. Virginia).
-  - **Instância B (Remota):** Região `us-west-2` (Oregon).
+### 3.1. Configuração do Ambiente na Nuvem
 
-A escolha por essas regiões específicas visa maximizar a distância física dentro da infraestrutura da AWS, permitindo a medição clara da latência inter-regional.
+Para a montagem deste laboratório, foram provisionadas duas instâncias computacionais do tipo **`t2.micro`** (1 vCPU e 1 GB de RAM), utilizando o sistema operacional **Ubuntu 22.04 Server**. A distribuição geográfica foi planejada para maximizar a latência de rede, posicionando uma instância na região da **Virgínia do Norte (`us-east-1`)** e outra no **Oregon (`us-west-2`)**, totalizando uma distância física de aproximadamente 4.000 km.
 
-**Configurações de Rede e Segurança:**
-1. **Isolamento Lógico (VPC):** A *Virtual Private Cloud* (VPC) é o serviço que permite criar uma rede virtual isolada e logicamente separada para seus recursos na nuvem. Embora o termo VPC seja específico da AWS, o conceito de rede virtual isolada é universal entre provedores:
-    - **Oracle Cloud (OCI):** Chamado de **VCN** (*Virtual Cloud Network*).
-    - **Microsoft Azure:** Chamado de **VNet** (*Virtual Network*).
-    - **Google Cloud (GCP):** Também utiliza o termo **VPC**.
-    
-    Para este laboratório, utilize as redes padrão de cada região ou configure um **VPC Peering** para permitir que as instâncias em regiões distintas (Virgínia e Oregon) se comuniquem via IPs privados, simulando uma rede local distribuída.
-2. **Firewall (Security Groups):** Libere o tráfego TCP para as portas utilizadas pelo MPI entre os IPs das duas instâncias, além da porta 22 para acesso SSH.
-3. **Chaves SSH:** Configure a autenticação por chaves assimétricas para permitir que o processo MPI em uma instância acesse a outra sem exigir senha.
+#### Isolamento Lógico e Topologia de Rede
+Um requisito fundamental para a execução de sistemas distribuídos em nuvem é a configuração de uma rede interna isolada. Na AWS, este recurso é denominado **VPC (*Virtual Private Cloud*)**. Este isolamento lógico é necessário tanto para a execução de processos em uma única máquina quanto para a comunicação entre instâncias distintas.
 
-## 2. Execução do Experimento (Latência)
+Embora o termo VPC seja proprietário da AWS, o conceito de rede lógica isolada é comum a outros provedores, sendo referenciado como:
+- **Oracle Cloud (OCI):** VCN (*Virtual Cloud Network*).
+- **Microsoft Azure:** VNet (*Virtual Network*).
+- **Google Cloud:** VPC.
 
-O experimento utiliza o benchmark `osu_latency` para medir o tempo de ida e volta (ping-pong) de mensagens.
+Para viabilizar a comunicação inter-regional via rede privada, deve-se configurar o **VPC Peering** (ou equivalente) e ajustar as regras de **Firewall (*Security Groups*)** para permitir o tráfego TCP nas portas utilizadas pelo MPI, além do acesso via chaves SSH para autenticação sem senha entre os nós.
 
-Após compilar o código na instância principal Us-east1, crie um arquivo `hostfile_aws` com os endereços IP (públicos ou privados, dependendo da sua configuração de VPC) das duas instâncias.
+### 3.2. Cenário de Execução: Comunicação Ponto-a-Ponto (Latência)
 
-**Comando de Execução:**
-Para garantir que o sistema identifique as placas de rede corretamente em ambientes de nuvem, utilizamos parâmetros específicos no `mpirun`, conforme citado no artigo:
+O experimento na nuvem foca na análise de latência utilizando o benchmark **`osu_latency`**. A operação segue o modelo *ping-pong*: o processo de origem envia uma mensagem (`MPI_Send`) e o processo de destino a recebe e devolve imediatamente (`MPI_Recv`). O teste é executado para diferentes tamanhos de mensagem (de 1 byte a 1 megabyte), reportando a média do tempo de transmissão após 100 iterações.
+
+#### Procedimento de Execução
+Após a compilação dos benchmarks, a execução deve ser disparada a partir da instância principal (Virgínia), utilizando um `hostfile` que contenha os endereços das instâncias envolvidas.
+
+Devido à natureza das interfaces de rede virtualizadas em nuvem, é necessário utilizar parâmetros adicionais no `mpirun` para a correta identificação das placas de rede e otimização do tráfego TCP:
 
 ```bash
 mpirun --hostfile hostfile_aws \
   --mca pml ob1 \
   --mca btl tcp,self \
   --mca btl_tcp_disable_family IPv6 \
-  --map-by node -np 2 /usr/local/osu/libexec/osu-micro-benchmarks/mpi/pt2pt/blocking/osu_latency
+  --map-by node -np 2 ./osu_latency
 ```
 
-*Nota: Dependendo da configuração da sua rede privada na AWS, pode ser necessário incluir o parâmetro `--mca btl_tcp_if_include <sua_subrede>` para forçar o uso de uma interface de rede específica.*
+### 3.3. Processamento de Dados e Visualização
 
-## 3. Geração dos Gráficos
+Os resultados brutos coletados estão disponíveis na pasta `dados/`. Para gerar a visualização oficial apresentada no artigo, utilize o script Python localizado em `scripts/`. O script está pré-configurado com os dados validados da pesquisa para garantir a integridade da Figura 2.
 
-Os scripts Python para plotagem dos gráficos estão localizados na pasta `scripts/`.
+1. Navegue até o diretório de scripts em seu host físico:
+   ```bash
+   cd aws_nuvem/scripts/
+   ```
+2. Execute a geração do gráfico:
+   ```bash
+   python3 plotar_grafico_aws.py
+   ```
 
-1.  Certifique-se de que os dados dos experimentos (`.csv`) estejam na pasta `dados/`.
-2.  No seu host (fora da instância AWS), navegue até o diretório `aws_nuvem/scripts/`.
-3.  Execute o script de plotagem. Por exemplo, para gerar o gráfico de latência da AWS:
-    ```bash
-    python3 plotar_grafico_aws.py
-    ```
-    *Isso gerará os arquivos de imagem (`.png`) e PDF (`.pdf`) na pasta `graficos/`.*
+Abaixo, a **Figura 2** do artigo, que compara a latência local (intra-instância) com a latência inter-regional (Virgínia-Oregon):
 
-## 4. Resultados
+![Figura 2: Latência AWS: Local (Virgínia) vs. Inter-regional (Virgínia-Oregon)](graficos/chart_osu_latency_aws.png)
 
-O gráfico abaixo, correspondente à Figura 2 do artigo, ilustra a diferença de latência entre a comunicação local (dentro da mesma instância na Virgínia) e a comunicação inter-regional (entre Virgínia e Oregon).
-
-![Latência AWS: Local vs. Inter-regional](graficos/chart_osu_latency_aws.png)
-
-Para acessar os dados brutos obtidos durante os testes, consulte a pasta `dados/`.
-```
+Para detalhes sobre os dados experimentais e scripts de plotagem, consulte as respectivas pastas neste diretório.
