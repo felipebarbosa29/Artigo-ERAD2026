@@ -20,6 +20,3 @@ Comparação entre execução local (mesma instância) e execução distribuída
 | 65536 | 10,93 | 85005,58 |
 | 1048576 | 380,12 | 115420,10 |
 | 4194304 | 1452,00 | 147349,24 |
-
-## 3. Análise Técnica
-*   **Latência Local:** Os valores na casa de 1 µs confirmam a eficiência da comunicação quando os processoss executam na mesma máquina virtual.
