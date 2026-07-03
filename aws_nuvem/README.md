@@ -55,6 +55,6 @@ Executamos o `osu_latency` em dois cenários diferentes:
 
 Os resultados dessas execuções são ilustrados pela **Figura 2**. No teste com ambos os processos em uma mesma máquina, a latência variou de **0,92µs até 202,66µs**. Com processos em máquinas distintas (inter-regional), a latência variou de **28,27ms até 87,17ms**.
 
-![Figura 2: Latência AWS: Local (Virgínia) vs. Inter-regional (Virgínia-Oregon)]![Figura 2: Latência AWS: Local (Virgínia) vs. Inter-regional (Virgínia-Oregon)](graficos/grafico_latencia_aws.png)
+![Figura 2: Latência AWS: Local (Virgínia) vs. Inter-regional (Virgínia-Oregon)](graficos/grafico_latencia_aws.png)
 
 Para auditoria dos dados e o script de plotagem, consulte as pastas `dados/` e `scripts/`.
