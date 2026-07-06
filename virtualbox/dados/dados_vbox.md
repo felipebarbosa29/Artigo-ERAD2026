@@ -15,6 +15,3 @@ Este documento consolida a medição obtida com a suíte OSU Micro-Benchmarks v7
 | 65536 | 3876,52 | 25341,15 | 9270,27 |
 | 1048576 | 20021,94 | 43703,31 | 48089,79 |
 
-**Análise de Sobrecarga:**
-*   **Cenário NP=4:** Desempenho mais estável devido ao mapeamento de 1 processo por vCPU física/virtual disponível por nó.
-*   **Cenário NP=8 e NP=16:** 

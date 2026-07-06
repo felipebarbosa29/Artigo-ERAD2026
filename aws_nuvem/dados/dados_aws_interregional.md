@@ -8,7 +8,7 @@ Medições de latência transcontinental utilizando instâncias EC2
 *   **Distância Estimada:** 4.500 km de fibra óptica.
 
 ## 2. Latência Ponto-a-Ponto (osu_latency)
-Comparação entre execução local (mesma instância) e execução distribuída entre regiões.
+Comparação entre execução local (mesma instância) e execução distribuída entre regiões -  Virgínia do Norte e Oregon - EUA.
 
 | Tamanho (Bytes) | Latência Local (µs) | Latência Inter-regional (µs) |
 | :--- | :--- | :--- |
