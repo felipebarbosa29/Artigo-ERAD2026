@@ -108,5 +108,4 @@ A Figura 1 (abaixo) apresenta os resultados deste experimento:
 ### Análise Técnica
 Observa-se que o tempo de execução tende a aumentar proporcionalmente ao tamanho da mensagem e ao número de processos ativos. Contudo, foram identificadas pequenas anomalias (ex: mensagens de 256 B com 4 processos), atribuídas a processos concorrentes no sistema operacional hospedeiro, o que reforça a necessidade de uma análise mais detalhada.
 
-Para detalhes dos dados brutos e scripts de plotagem, consulte as pastas `dados/` e `scripts/`.
-```
+Para detalhes dos dados e script de plotagem, consulte as pastas `dados/` e `scripts/`.
