@@ -4,7 +4,7 @@ Este diretório contém as versões customizadas dos benchmarks da suíte **OSU 
 
 ## Motivação das Modificações
 
-Originalmente, os benchmarks da Ohio State University fornecem apenas os resultados de desempenho (latência/throughput). Para fins didáticos e de auditoria experimental, modificamos o código-fonte para incluir mecanismos de **observabilidade de topologia**.
+Originalmente, os benchmarks da Ohio State University fornecem apenas os resultados de desempenho (latência/taxa de transferência). Para fins didáticos e de auditoria experimental, modificamos o código-fonte para incluir mecanismos de **observabilidade de topologia**.
 
 As alterações permitem validar, em tempo de execução, se o escalonador do MPI está distribuindo os processos corretamente entre os nós do cluster (VirtualBox ou AWS), correlacionando o **Rank MPI** com o **Hostname** da instância.
 
