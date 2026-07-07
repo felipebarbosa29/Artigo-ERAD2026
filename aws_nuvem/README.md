@@ -8,7 +8,7 @@ A utilização da nuvem pública visa proporcionar um cenário de experimentaç�
 
 ### 3.1. Fundamentos de Networking e Infraestrutura
 
-A base da experimentação na AWS reside na definição de uma topologia de rede isolada. Abaixo, detalhamos os componentes utilizados:
+A execução na AWS necessita que seja feita a configuração prévia de componentes de rede para a instância e comunicação dos nós. Abaixo, detalhamos a topologia utilizada:
 
 #### Virtual Private Cloud (VPC)
 A [Amazon VPC](https://docs.aws.amazon.com/vpc/latest/userguide/what-is-amazon-vpc.html) permite lançar recursos da AWS em uma rede virtual logicamente isolada. Este isolamento serve para:
@@ -18,7 +18,7 @@ A [Amazon VPC](https://docs.aws.amazon.com/vpc/latest/userguide/what-is-amazon-v
 
 #### VPC Peering Inter-regional
 Para conectar a instância da **Virgínia do Norte (`us-east-1`)** à instância do **Oregon (`us-west-2`)**, distantes ~4.000 km, utiliza-se o [VPC Peering](https://docs.aws.amazon.com/vpc/latest/peering/what-is-vpc-peering.html).
-- **A conexão** O Peering estabelece uma conexão de roteamento direta. Ao trafegar via rede privada, os pacotes utilizam o *backbone* de fibra óptica global da AWS, evitando a internet pública.
+- **A conexão:** O Peering estabelece uma conexão de roteamento direta. Ao trafegar via rede privada, os pacotes utilizam o *backbone* de fibra óptica global da AWS, evitando a internet pública.
 - **Vantagem Experimental:** Reduz o **Jitter** (variação da latência), garantindo que os resultados reflitam a latência física.
 - **Equivalências:** *Remote VCN Peering* (OCI), *Global VNet Peering* (Azure) e *VPC Network Peering* (GCP).
 
@@ -31,7 +31,7 @@ Para conectar a instância da **Virgínia do Norte (`us-east-1`)** à instância
 O experimento utiliza o benchmark **`osu_latency`** sob o modelo **"ping-pong"**: o processo raiz envia uma mensagem (`MPI_Send`) e o destino a devolve(`MPI_Recv`). A latência reportada é a média de **100 iterações** para cada tamanho de mensagem.
 
 #### Procedimento de Execução
-A execução deve ser iniciada a partir da instância na **Virgínia do Norte**. Parâmetros de MCA (*Modular Component Architecture*) são para a correta identificação das placas de rede virtuais (ENA):
+A execução deve foi iniciada a partir da instância na **Virgínia do Norte**. Parâmetros de MCA (*Modular Component Architecture*) são para a correta identificação das placas de rede virtuais (ENA):
 
 ```bash
 # Execução iniciada na instância da Virgínia do Norte
