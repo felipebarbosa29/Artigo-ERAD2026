@@ -52,10 +52,16 @@ O foco no ambiente local é a análise de latência em operações coletivas usa
    ```bash
    vagrant ssh node1
    ```
-2. Execute o benchmark variando o número de processos (`-np`) para 4, 8 e 16:
+2. Compile o código modificado (o Vagrant compartilha a pasta do projeto automaticamente em `/vagrant`):
    ```bash
-   mpirun -np 4 --hostfile ~/hostfile --oversubscribe --mca btl tcp,self --mca btl_tcp_if_include 192.168.56.0/24 --mca mpi_yield_when_idle 1 /usr/local/osu/libexec/osu-micro-benchmarks/mpi/collective/osu_bcast
+   mpicc -o ~/osu_bcast_modificado /vagrant/codigos_modificados/osu_bcast.c
    ```
+3. Execute o benchmark variando o número de processos (`-np`) para 4, 8 e 16:
+   ```bash
+   mpirun -np 4 --hostfile ~/hostfile --oversubscribe --mca btl tcp,self --mca btl_tcp_if_include 192.168.56.0/24 --mca mpi_yield_when_idle 1 ~/osu_bcast_modificado
+   ```
+
+*Nota: Ao rodar o código modificado, você verá no terminal a identificação de qual VM está processando cada Rank, validando a teoria de escalonamento discutida no artigo.*
 
 ### Explicação dos Parâmetros
 

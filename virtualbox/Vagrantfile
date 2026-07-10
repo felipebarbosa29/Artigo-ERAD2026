@@ -2,6 +2,7 @@
 # vi: set ft=ruby :
 
 # Vagrantfile para o Laboratório Didático de Computação Distribuída
+# Cria 4 máquinas virtuais Ubuntu 22.04 para experimentos com MPI
 
 Vagrant.configure("2") do |config|
   # Usar a imagem oficial do Ubuntu 22.04 LTS
@@ -21,8 +22,8 @@ Vagrant.configure("2") do |config|
       # Configuração de recursos do VirtualBox
       node.vm.provider "virtualbox" do |vb|
         vb.name = "erad_node#{i}"
-        vb.memory = "1024" # 1 GB de RAM
-        vb.cpus = 1        # 1 vCPU
+        vb.memory = "1024" # 1 GB de RAM conforme artigo
+        vb.cpus = 1        # 1 vCPU conforme artigo
         # Otimizações de rede
         vb.customize ["modifyvm", :id, "--nictype1", "virtio"]
         vb.customize ["modifyvm", :id, "--nictype2", "virtio"]
@@ -32,7 +33,7 @@ Vagrant.configure("2") do |config|
       node.vm.provision "shell", inline: <<-SHELL
         echo "Atualizando pacotes e instalando dependências..."
         apt-get update
-        apt-get install -y openmpi-bin openmpi-common libopenmpi-dev build-essential gcc make wget tar
+        apt-get install -y openmpi-bin openmpi-common libopenmpi-dev build-essential gcc make wget tar git
 
         echo "Baixando e compilando OSU Micro-Benchmarks..."
         cd /tmp
@@ -66,7 +67,6 @@ EOF
         chown vagrant:vagrant /home/vagrant/hostfile
 
         echo "========== CONFIGURAÇÃO DE SSH AUTOMÁTICA =========="
-        # Garante que a pasta ssh existe
         mkdir -p /home/vagrant/.ssh
         chown vagrant:vagrant /home/vagrant/.ssh
 
@@ -89,6 +89,14 @@ EOF
         chown vagrant:vagrant /home/vagrant/.ssh/authorized_keys /home/vagrant/.ssh/config
         chmod 600 /home/vagrant/.ssh/authorized_keys /home/vagrant/.ssh/config
         echo "========== SSH CONFIGURADO COM SUCESSO =========="
+
+        echo "========== DOWNLOAD DOS CÓDIGOS MODIFICADOS =========="
+        # Baixa os códigos diretamente do GitHub para evitar problemas de pasta compartilhada
+        cd /home/vagrant/
+        wget -q https://raw.githubusercontent.com/felipebarbosa29/Artigo-ERAD2026/main/codigos_modificados/osu_bcast.c
+        wget -q https://raw.githubusercontent.com/felipebarbosa29/Artigo-ERAD2026/main/codigos_modificados/osu_latency.c
+        chown vagrant:vagrant /home/vagrant/osu_bcast.c /home/vagrant/osu_latency.c
+        echo "Códigos modificados baixados com sucesso!"
 
       SHELL
     end
