@@ -79,3 +79,5 @@ Os resultados das execuções ficam na pasta `dados/`. Para gerar os gráficos d
    plotar_grafico_vbox.py
    ```
 Os gráficos serão salvos na pasta `graficos/`.
+
+![Figura 1: VirtualBox:Desempenho de Broadcast no VirtualBox](graficos/chart_osu_bcast.png)
