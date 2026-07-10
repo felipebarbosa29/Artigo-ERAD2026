@@ -2,7 +2,6 @@
 # vi: set ft=ruby :
 
 # Vagrantfile para o Laboratório Didático de Computação Distribuída
-# Cria 4 máquinas virtuais Ubuntu 22.04 para experimentos com MPI
 
 Vagrant.configure("2") do |config|
   # Usar a imagem oficial do Ubuntu 22.04 LTS
@@ -22,8 +21,8 @@ Vagrant.configure("2") do |config|
       # Configuração de recursos do VirtualBox
       node.vm.provider "virtualbox" do |vb|
         vb.name = "erad_node#{i}"
-        vb.memory = "1024" # 1 GB de RAM conforme artigo
-        vb.cpus = 1        # 1 vCPU conforme artigo
+        vb.memory = "1024" # 1 GB de RAM
+        vb.cpus = 1        # 1 vCPU
         # Otimizações de rede
         vb.customize ["modifyvm", :id, "--nictype1", "virtio"]
         vb.customize ["modifyvm", :id, "--nictype2", "virtio"]
