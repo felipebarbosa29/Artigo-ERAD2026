@@ -47,7 +47,8 @@ def gerar_grafico_aws():
     # Configuração dos eixos
     ax = plt.gca()
     
-    # Formatação Eixo X
+    # FORCAR EIXO X A TER APENAS OS PONTOS DE DADOS (Igual ao Artigo)
+    ax.set_xticks(tamanhos)
     ax.xaxis.set_major_formatter(ticker.FuncFormatter(formatador_bytes))
     plt.xticks(rotation=45, fontsize=10)
 
@@ -77,7 +78,7 @@ def gerar_grafico_aws():
     plt.savefig('../graficos/grafico_latencia_aws.png', dpi=300)
     plt.savefig('../graficos/grafico_latencia_aws.pdf', format='pdf')
 
-    print(f"Sucesso! Grafico AWS gerado a partir de {csv_path} e salvo em '../graficos/'.")
+    print(f"Sucesso! Grafico AWS atualizado com Eixo X alinhado aos dados em '../graficos/'.")
 
 if __name__ == '__main__':
     gerar_grafico_aws()
