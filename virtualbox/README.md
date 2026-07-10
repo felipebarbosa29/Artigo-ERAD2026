@@ -61,7 +61,7 @@ O foco no ambiente local é a análise de latência em operações coletivas usa
 
 *   `-np [4, 8, 16]`: Define quantos processos MPI serão lançados.
 *   `--hostfile ~/hostfile`: Lista de IPs das máquinas virtuais criada pelo Vagrant.
-*   `--oversubscribe`: Permite rodar mais processos do que núcleos de CPU, essencial para testar a sobrecarga do sistema.
+*   `--oversubscribe`: Permite rodar mais processos do que núcleos de CPU.
 *   `--mca btl tcp,self`: Força o uso da rede TCP para comunicação.
 *   `--mca btl_tcp_if_include 192.168.56.0/24`: Garante que o teste use apenas a rede isolada do VirtualBox, sem interferência do seu Wi-Fi ou Internet.
 *   `--mca mpi_yield_when_idle 1`: Faz as VMs "cederem" processamento quando ociosas, evitando que o seu computador trave.

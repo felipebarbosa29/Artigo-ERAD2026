@@ -53,8 +53,13 @@ for spine in ax.spines.values():
 
 plt.tight_layout()
 
-# 9. Salvando nos formatos solicitados
-plt.savefig('grafico_latencia.png', format='png', dpi=300, bbox_inches='tight')
-plt.savefig('grafico_latencia.pdf', format='pdf', bbox_inches='tight')
+import os
 
-print("Gráficos gerados com sucesso: 'grafico_latencia.png' e 'grafico_latencia.pdf'")
+# Garantir que a pasta graficos existe
+os.makedirs('../graficos', exist_ok=True)
+
+# 9. Salvando nos formatos solicitados na pasta correta
+plt.savefig('../graficos/chart_osu_bcast.png', format='png', dpi=300, bbox_inches='tight')
+plt.savefig('../graficos/chart_osu_bcast.pdf', format='pdf', bbox_inches='tight')
+
+print("Gráficos gerados com sucesso na pasta '../graficos/': 'chart_osu_bcast.png' e 'chart_osu_bcast.pdf'")
