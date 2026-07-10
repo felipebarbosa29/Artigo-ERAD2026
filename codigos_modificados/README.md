@@ -1,6 +1,6 @@
 # Códigos-Fonte Modificados
 
-Este diretório contém as versões customizadas dos benchmarks da suíte **OSU Micro-Benchmarks (v7.3)** utilizados nos experimentos deste laboratório.
+Este diretório contém as versões customizadas dos benchmarks **OSU Micro-Benchmarks (v7.3)** utilizados nos experimentos deste laboratório.
 
 ## Motivação das Modificações
 
@@ -11,7 +11,6 @@ As alterações permitem validar, em tempo de execução, se o escalonador do MP
 ## Arquivos Modificados
 
 ### 1. `osu_bcast.c`
-Localizado originalmente em `c/mpi/collective/blocking/osu_bcast.c`.
 - **Alteração:** Inserção de um bloco de código após a inicialização do ambiente MPI (`MPI_Init`).
 - **Funcionalidade:** 
   - Captura o nome da máquina (`gethostname`).
@@ -20,14 +19,13 @@ Localizado originalmente em `c/mpi/collective/blocking/osu_bcast.c`.
 - **Objetivo:** Confirmar visualmente a distribuição dos processos nas 4 VMs do cluster local antes do início da coleta de dados.
 
 ### 2. `osu_latency.c`
-Localizado originalmente em `c/mpi/pt2pt/standard/osu_latency.c`.
 - **Alteração:** Implementação de lógica similar de identificação de host.
 - **Funcionalidade:** Exibe o mapeamento dos dois processos envolvidos no teste *ping-pong*.
 - **Objetivo:** Validar o cenário de execução inter-regional na AWS, garantindo que o Rank 0 esteja na Virgínia e o Rank 1 no Oregon (ou vice-versa), conforme definido no `hostfile`.
 
 ## Como Compilar
 
-Para utilizar estas versões modificadas, substitua os arquivos originais na árvore de diretórios do OMB e proceda com a compilação padrão:
+Para utilizar estas versões modificadas, substitua os arquivos originais nos diretórios do Osu Benchmark e proceda com a compilação padrão:
 
 ```bash
 ./configure CC=mpicc --prefix=/usr/local
@@ -35,5 +33,3 @@ make
 sudo make install
 ```
 
----
-*Nota: Estas modificações não alteram a lógica de medição de tempo dos benchmarks originais, garantindo a integridade dos resultados de latência reportados.*
