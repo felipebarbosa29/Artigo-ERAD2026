@@ -76,6 +76,6 @@ Os resultados das execuções ficam na pasta `dados/`. Para gerar os gráficos d
    ```
 2. Execute o script (requer Python instalado):
    ```bash
-   python3 plot_latencia.py
+   plotar_grafico_vbox.py
    ```
 Os gráficos serão salvos na pasta `graficos/`.
