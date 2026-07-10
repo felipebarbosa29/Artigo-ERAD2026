@@ -45,6 +45,9 @@ Vagrant.configure("2") do |config|
         make install > /dev/null 2>&1
         echo "OSU Micro-Benchmarks compilados e instalados em /usr/local/osu"
 
+        echo "Configurando variáveis de ambiente (PATH) para o aluno..."
+        # Adiciona as pastas 'pt2pt' e 'collective' ao PATH no .bashrc do usuário vagrant
+        echo 'export PATH=$PATH:/usr/local/osu/libexec/osu-micro-benchmarks/mpi/pt2pt:/usr/local/osu/libexec/osu-micro-benchmarks/mpi/collective' >> /home/vagrant/.bashrc
         
         echo "Configurando arquivo hosts..."
         cat <<EOF > /etc/hosts_mpi
