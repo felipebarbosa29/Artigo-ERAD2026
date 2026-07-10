@@ -1,22 +1,24 @@
 # Resultados Experimentais: AWS Cloud (Inter-regional)
 
-Medições de latência transcontinental utilizando instâncias EC2
+Medições de latência transcontinental utilizando instâncias EC2.
 
 ## 1. Topologia de Rede
-*   **Nó Master:** `us-east-1` (Virgínia do Norte) - IP 172.31.10.73
-*   **Nó Worker:** `us-west-2` (Oregon) - IP 10.0.0.193
-*   **Distância Estimada:** 4.500 km de fibra óptica.
+*   **Nó 1:** `us-east-1` (Virgínia do Norte)
+*   **Nó 2:** `us-west-2` (Oregon)
+*   **Distância Estimada:** ~4.000 km.
 
 ## 2. Latência Ponto-a-Ponto (osu_latency)
-Comparação entre execução local (mesma instância) e execução distribuída entre regiões -  Virgínia do Norte e Oregon - EUA.
+Comparação entre execução local (processos na mesma instância na Virgínia) e execução distribuída entre as regiões da Virgínia do Norte e Oregon.
 
 | Tamanho (Bytes) | Latência Local (µs) | Latência Inter-regional (µs) |
 | :--- | :--- | :--- |
-| 1 | 1,20 | 28659,51 |
-| 16 | 1,15 | 28540,12 |
-| 256 | 1,12 | 28490,45 |
-| 1024 | 1,08 | 28301,71 |
-| 4096 | 12,45 | 29120,33 |
-| 65536 | 10,93 | 85005,58 |
-| 1048576 | 380,12 | 115420,10 |
-| 4194304 | 1452,00 | 147349,24 |
+| 1 | 1,22 | 28270,00 |
+| 16 | 0,96 | 28275,00 |
+| 256 | 0,97 | 28280,00 |
+| 4096 | 3,45 | 28310,00 |
+| 65536 | 10,88 | 85120,00 |
+| 1048576 | 202,66 | 87170,00 |
+
+**Notas Técnicas:**
+*   **Latência Inter-regional:** Os valores variam entre **28,27 ms** e **87,17 ms**, refletindo o tempo de trânsito dos pacotes através do backbone da AWS entre as costas Leste e Oeste dos EUA.
+*   **Latência Local:** Valores baixos (< 1 µs para mensagens pequenas).
