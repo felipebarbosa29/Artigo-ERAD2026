@@ -4,9 +4,7 @@ Este diretório contém as versões customizadas dos benchmarks **OSU Micro-Benc
 
 ## Motivação das Modificações
 
-Originalmente, os benchmarks da Ohio State University fornecem apenas os resultados de desempenho (latência/taxa de transferência). Para fins didáticos e de auditoria experimental, modificamos o código-fonte para incluir mecanismos de **observabilidade de topologia**.
-
-As alterações permitem validar, em tempo de execução, se o escalonador do MPI está distribuindo os processos corretamente entre os nós do cluster (VirtualBox ou AWS), correlacionando o **Rank MPI** com o **Hostname** da instância.
+Normalmente, esses testes mostram apenas a velocidade da rede. Modificamos o código para que ele também informe o nome da máquina onde cada tarefa está rodando. Isso ajuda a conferir se o MPI distribuiu os processos corretamente entre as máquinas virtuais ou os servidores na nuvem.
 
 ## Arquivos Modificados
 
