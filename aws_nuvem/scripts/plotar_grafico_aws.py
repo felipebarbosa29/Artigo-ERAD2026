@@ -1,61 +1,83 @@
 import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
+import pandas as pd
+import os
 
-# 1. Dados Filtrados: Apenas os 6 pontos de referência (para manter o gráfico limpo)
-sizes = [1, 16, 256, 4096, 65536, 1048576]
-labels_x = ['1 B', '16 B', '256 B', '4 KB', '64 KB', '1 MB']
+# Funcao para formatar os ticks do Eixo X (B, KB, MB)
+def formatador_bytes(x, pos):
+    if x < 1024:
+        return f"{int(x)} B"
+    elif x < 1048576:
+        return f"{int(x/1024)} KB"
+    else:
+        return f"{int(x/1048576)} MB"
 
-# Valores extraídos do Print 1 (Mesma máquina local - Norte da Virgínia)
-lat_local = [1.20, 0.96, 0.97, 3.47, 10.93, 202.66]
+# Funcao para formatar os ticks do Eixo Y (Numeros Inteiros)
+def formatador_inteiro(x, pos):
+    if x >= 1:
+        return f"{int(x):,}".replace(",", ".")
+    else:
+        return f"{x:.2f}"
 
-# Valores extraídos do Print 2 (Inter-regiões: Virgínia -> Oregon)
-lat_dist = [28659.51, 28286.30, 28287.12, 28315.99, 85005.58, 87179.18]
+def gerar_grafico_aws():
+    # Caminho do CSV
+    csv_path = '../dados/dados_aws_interregional.csv'
+    
+    if not os.path.exists(csv_path):
+        print(f"Erro: O arquivo {csv_path} nao foi encontrado.")
+        return
 
-# 2. Configuração da Figura (Estética Limpa e Acadêmica)
-fig, ax = plt.subplots(figsize=(10, 6), dpi=300)
-fig.patch.set_facecolor('white')
-ax.set_facecolor('white')
+    # Lendo os dados via Pandas
+    df = pd.read_csv(csv_path)
+    tamanhos = df['Tamanho_Bytes']
+    tempo_local = df['Local_Virginia_us']
+    tempo_inter = df['Interregional_OR_VA_us']
 
-# Cores idênticas ao modelo enviado (Paleta Seaborn)
-cor_azul = '#4C72B0'
-cor_laranja = '#DD8452'
+    plt.figure(figsize=(10, 6))
+    
+    # Plotagem com estilos e legendas idênticas ao artigo
+    plt.plot(tamanhos, tempo_local, marker='o', markersize=6, linestyle='-', linewidth=1.5, color='#1f77b4', 
+             label='2 processos na Virgínia do Norte')
+    plt.plot(tamanhos, tempo_inter, marker='s', markersize=6, linestyle='-', linewidth=1.5, color='#ff7f0e', 
+             label='1 processo no Oregon e 1 processo na Virgínia do Norte')
 
-# 3. Plotando as linhas com marcadores específicos
-ax.plot(sizes, lat_local, marker='o', markersize=8, linewidth=2.5, color=cor_azul, label='Linha de Base Local (N. Virgínia)')
-ax.plot(sizes, lat_dist, marker='s', markersize=8, linewidth=2.5, color=cor_laranja, label='Rede Distribuída (Virgínia $\\rightarrow$ Oregon)')
+    plt.xscale('log', base=2)
+    plt.yscale('log', base=10)
 
-# 4. Escalas Logarítmicas
-ax.set_xscale('log', base=2)
-ax.set_yscale('log', base=10)
+    # Configuração dos eixos
+    ax = plt.gca()
+    
+    # Formatação Eixo X
+    ax.xaxis.set_major_formatter(ticker.FuncFormatter(formatador_bytes))
+    plt.xticks(rotation=45, fontsize=10)
 
-# 5. Configuração do Eixo X 
-ax.set_xticks(sizes)
-ax.set_xticklabels(labels_x, rotation=45, ha='right', fontsize=12)
+    # Formatação Eixo Y (Numeros Legiveis em vez de 10^x)
+    ax.yaxis.set_major_formatter(ticker.FuncFormatter(formatador_inteiro))
+    plt.yticks(fontsize=10)
 
-# Configuração do Eixo Y
-ax.tick_params(axis='y', labelsize=12)
+    # Ajuste de limites para focar nos dados
+    plt.ylim(0.5, 200000)
 
-# 6. Títulos e Textos Traduzidos
-ax.set_title('OSU Micro-Benchmarks: LATÊNCIA (Ponto-a-Ponto)', fontsize=16, fontweight='bold', pad=15)
-ax.set_xlabel('Tamanho da Mensagem', fontsize=14, fontweight='bold', labelpad=10)
-ax.set_ylabel('Latência (µs)', fontsize=14, fontweight='bold', labelpad=10)
+    plt.xlabel('Tamanho da Mensagem', fontsize=12, fontweight='bold')
+    plt.ylabel('Latência (µs)', fontsize=12, fontweight='bold')
+    plt.title('OSU Micro-Benchmarks: LATÊNCIA (Ponto-a-Ponto)', fontsize=14, fontweight='bold', pad=15)
+    
+    plt.legend(loc='center left', fontsize=10)
+    
+    # Grid principal e secundaria
+    plt.grid(True, which="major", ls="-", alpha=0.3, color='gray')
+    plt.grid(True, which="minor", ls=":", alpha=0.2, color='gray')
 
-# 7. Grid (Grade) tracejada em cinza claro
-ax.grid(True, which='major', linestyle='--', color='#d3d3d3', linewidth=1.2)
+    plt.tight_layout()
 
-# 8. Legenda centralizada à esquerda (espaço vazio) e com fonte reduzida
-legend = ax.legend(fontsize=11, loc='center left', frameon=True)
-legend.get_frame().set_edgecolor('#cccccc')
-legend.get_frame().set_linewidth(1.5)
+    # Garantir que a pasta graficos existe
+    os.makedirs('../graficos', exist_ok=True)
 
-# Borda do gráfico cinza claro
-for spine in ax.spines.values():
-    spine.set_edgecolor('#cccccc')
-    spine.set_linewidth(1.5)
+    # Salvando na pasta correta
+    plt.savefig('../graficos/grafico_latencia_aws.png', dpi=300)
+    plt.savefig('../graficos/grafico_latencia_aws.pdf', format='pdf')
 
-plt.tight_layout()
+    print(f"Sucesso! Grafico AWS gerado a partir de {csv_path} e salvo em '../graficos/'.")
 
-# 9. Salvando nos formatos solicitados
-plt.savefig('grafico_latencia_aws.png', format='png', dpi=300, bbox_inches='tight')
-plt.savefig('grafico_latencia_aws.pdf', format='pdf', bbox_inches='tight')
-
-print("Gráficos gerados com sucesso: 'grafico_latencia_aws.png' e 'grafico_latencia_aws.pdf'")
+if __name__ == '__main__':
+    gerar_grafico_aws()
