@@ -13,6 +13,9 @@ Vagrant.configure("2") do |config|
 
   (1..N).each do |i|
     config.vm.define "node#{i}" do |node|
+      # Compartilha a pasta raiz do projeto (um nível acima) para acessar codigos_modificados
+      node.vm.synced_folder "../", "/vagrant_data"
+
       # Configuração de rede interna (host-only) para comunicação isolada
       node.vm.network "private_network", ip: "192.168.56.10#{i}"
       
@@ -24,40 +27,72 @@ Vagrant.configure("2") do |config|
         vb.name = "erad_node#{i}"
         vb.memory = "1024" # 1 GB de RAM conforme artigo
         vb.cpus = 1        # 1 vCPU conforme artigo
-        # Otimizações de rede
         vb.customize ["modifyvm", :id, "--nictype1", "virtio"]
         vb.customize ["modifyvm", :id, "--nictype2", "virtio"]
       end
 
-      # Script de provisionamento básico (instalação do MPI e ferramentas)
+      # Script de provisionamento básico
       node.vm.provision "shell", inline: <<-SHELL
         echo "Atualizando pacotes e instalando dependências..."
-        apt-get update
-        apt-get install -y openmpi-bin openmpi-common libopenmpi-dev build-essential gcc make wget tar git
+        apt-get update -qq
+        apt-get install -y -qq openmpi-bin openmpi-common libopenmpi-dev build-essential gcc make wget tar git
 
-        echo "Baixando e compilando OSU Micro-Benchmarks..."
-        cd /tmp
-        if [ ! -d "/usr/local/osu" ]; then
-            wget --no-check-certificate https://mvapich.cse.ohio-state.edu/download/mvapich/osu-micro-benchmarks-7.3.tar.gz
+        # O SEGREDO ESTÁ AQUI: Caminho correto na versão 7.3
+        DEST_PATH="c/mpi/collective/blocking/osu_bcast.c"
+        
+        # Verifica se o OSU já foi compilado para evitar perda de tempo no reload
+        if [ ! -f "/usr/local/osu/libexec/osu-micro-benchmarks/mpi/collective/osu_bcast" ]; then
+            echo "Instalação nova detectada. Baixando OSU Micro-Benchmarks..."
+            rm -rf /tmp/osu-micro-benchmarks-7.3*
+            cd /tmp
+            wget -q --no-check-certificate https://mvapich.cse.ohio-state.edu/download/mvapich/osu-micro-benchmarks-7.3.tar.gz
             tar -xzf osu-micro-benchmarks-7.3.tar.gz
             cd osu-micro-benchmarks-7.3
+            
+            # Estratégia de Injeção Local: Procura o arquivo na pasta compartilhada
+            echo "Buscando código modificado na pasta compartilhada..."
+            MOD_FILE=$(find /vagrant_data -name osu_bcast.c | grep "codigos_modificados" | head -n 1)
+            
+            if [ -n "$MOD_FILE" ]; then
+                echo "Sucesso! Arquivo modificado encontrado em: $MOD_FILE"
+                cp "$MOD_FILE" $DEST_PATH
+            else
+                echo "AVISO: Arquivo modificado não encontrado em /vagrant_data. Usando versão do GitHub..."
+                wget -q -O $DEST_PATH https://raw.githubusercontent.com/felipebarbosa29/Artigo-ERAD2026/main/codigos_modificados/osu_bcast.c
+            fi
+
+            # Injeta um marcador visual no cabeçalho para confirmar a versão
+            sed -i 's/OSU MPI%s Broadcast Latency Test/OSU MPI%s Broadcast Latency Test (AUDITAVEL)/' $DEST_PATH
+
+            echo "Compilando OSU Micro-Benchmarks (isso pode levar alguns minutos)..."
             ./configure CC=mpicc CXX=mpicxx --prefix=/usr/local/osu --quiet
             make -j$(nproc) > /dev/null 2>&1
             make install > /dev/null 2>&1
-            echo "OSU compilado!"
+        else
+            echo "OSU Micro-Benchmarks já instalado. Pulando etapa de compilação!"
+        fi
+        
+        echo "Verificação Final: "
+        if /usr/local/osu/libexec/osu-micro-benchmarks/mpi/collective/osu_bcast --version | grep -q "AUDITAVEL"; then
+            echo "CONFIRMADO: Versão auditável instalada com sucesso!"
+        else
+            echo "ERRO: O marcador (AUDITAVEL) não foi encontrado no executável compilado."
         fi
 
-        echo "Configurando arquivo hosts..."
-        cat <<EOF > /etc/hosts_mpi
+        # Otimização de Usabilidade: Adiciona o caminho ao PATH do vagrant
+        if ! grep -q "osu-micro-benchmarks" /home/vagrant/.bashrc; then
+            echo "export PATH=$PATH:/usr/local/osu/libexec/osu-micro-benchmarks/mpi/collective:/usr/local/osu/libexec/osu-micro-benchmarks/mpi/pt2pt" >> /home/vagrant/.bashrc
+            echo "Atalho PATH configurado."
+        fi
+
+        echo "Configurando rede e SSH..."
+        cat <<EOF > /etc/hosts
 127.0.0.1 localhost
 192.168.56.101 node1
 192.168.56.102 node2
 192.168.56.103 node3
 192.168.56.104 node4
 EOF
-        cat /etc/hosts_mpi > /etc/hosts
-        
-        echo "Gerando hostfile MPI..."
         cat > /home/vagrant/hostfile <<-EOF
 192.168.56.101 node1
 192.168.56.102 node2
@@ -66,38 +101,16 @@ EOF
 EOF
         chown vagrant:vagrant /home/vagrant/hostfile
 
-        echo "========== CONFIGURAÇÃO DE SSH AUTOMÁTICA =========="
         mkdir -p /home/vagrant/.ssh
-        chown vagrant:vagrant /home/vagrant/.ssh
-
-        # Se for o node1 (Mestre), gera a chave e salva na pasta compartilhada (/vagrant)
         if [ "#{i}" -eq "1" ]; then
-          echo "Gerando chave SSH no node1..."
           sudo -u vagrant ssh-keygen -t rsa -b 2048 -N "" -f /home/vagrant/.ssh/id_rsa
           cp /home/vagrant/.ssh/id_rsa.pub /vagrant/master_key.pub
         fi
-
-        # Todos os nós leem a chave do mestre da pasta compartilhada e autorizam o login
-        echo "Autorizando a chave do node1 neste nó..."
         while [ ! -f /vagrant/master_key.pub ]; do sleep 1; done
         cat /vagrant/master_key.pub >> /home/vagrant/.ssh/authorized_keys
-
-        # Desativa a pergunta "Are you sure you want to continue connecting?"
         echo -e "Host *\n\tStrictHostKeyChecking no\n\tUserKnownHostsFile /dev/null\n\tLogLevel ERROR" > /home/vagrant/.ssh/config
-        
-        # Ajusta permissões de segurança exigidas pelo SSH
-        chown vagrant:vagrant /home/vagrant/.ssh/authorized_keys /home/vagrant/.ssh/config
+        chown -R vagrant:vagrant /home/vagrant/.ssh
         chmod 600 /home/vagrant/.ssh/authorized_keys /home/vagrant/.ssh/config
-        echo "========== SSH CONFIGURADO COM SUCESSO =========="
-
-        echo "========== DOWNLOAD DOS CÓDIGOS MODIFICADOS =========="
-        # Baixa os códigos diretamente do GitHub para evitar problemas de pasta compartilhada
-        cd /home/vagrant/
-        wget -q https://raw.githubusercontent.com/felipebarbosa29/Artigo-ERAD2026/main/codigos_modificados/osu_bcast.c
-        wget -q https://raw.githubusercontent.com/felipebarbosa29/Artigo-ERAD2026/main/codigos_modificados/osu_latency.c
-        chown vagrant:vagrant /home/vagrant/osu_bcast.c /home/vagrant/osu_latency.c
-        echo "Códigos modificados baixados com sucesso!"
-
       SHELL
     end
   end
