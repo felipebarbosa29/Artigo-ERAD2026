@@ -22,68 +22,57 @@ A infraestrutura é definida como código (*Infrastructure as Code*) no arquivo 
 ### Instalação e Configuração
 
 1. Abra o **PowerShell como Administrador** e navegue até esta pasta.
-2. Se não tiver o Vagrant, instale-o via Gerenciador de Pacotes do Windows:
-   ```powershell
-   winget install --id Hashicorp.Vagrant
-   ```
-   *Nota: Pode ser necessário reiniciar o computador para atualizar as variáveis de ambiente.*
-
-3. Inicie o laboratório:
+2. Inicie o laboratório:
    ```bash
    vagrant up
    ```
-O Vagrant fará o download do Ubuntu e configurará as ferramentas automaticamente. Aguarde até que os 4 nós (`node1` a `node4`) estejam prontos.
+O Vagrant fará o download do Ubuntu e configurará as ferramentas automaticamente. O `Vagrantfile` já injeta os códigos modificados do autor durante a compilação.
 
 ### Gerenciando o Laboratório
 
-Como o laboratório roda na sua máquina, é importante saber como liberar recursos (RAM e CPU) quando não estiver estudando. Execute estes comandos na pasta do `Vagrantfile`:
+Como o laboratório roda na sua máquina, é importante saber como liberar recursos (RAM e CPU) quando não estiver estudando:
 
-*   **Ligar o Cluster:** `vagrant up` (instala na primeira vez, apenas liga nas próximas).
-*   **Desligar (Pausar):** `vagrant halt` (desliga as VMs com segurança).
-*   **Excluir Tudo:** `vagrant destroy -f` (apaga as máquinas e discos virtuais permanentemente).
+*   **Ligar o Cluster:** `vagrant up`
+*   **Desligar (Pausar):** `vagrant halt` (recupera a RAM do seu computador).
+*   **Excluir Tudo:** `vagrant destroy -f` (apaga as máquinas e discos virtuais).
 
 ## 2. Execução dos Experimentos
 
-O foco no ambiente local é a análise de latência em operações coletivas usando o benchmark de Broadcast (`osu_bcast`). O `Vagrantfile` já configura os caminhos do sistema para facilitar a execução.
+O foco no ambiente local é a análise de latência em operações coletivas usando o benchmark de Broadcast (`osu_bcast`). 
 
-### Como Rodar o Teste
+### Como Rodar o Teste (Código Modificado)
+
+Para validar a distribuição dos processos entre os nós (auditoria de Rank vs Hostname), o OSU já foi compilada com as modificações.
 
 1. Acesse o nó principal via SSH:
    ```bash
    vagrant ssh node1
    ```
-2. Compile o código modificado (o Vagrant compartilha a pasta do projeto automaticamente em `/vagrant`):
+
+2. Execute o benchmark customizado:
    ```bash
-   mpicc -o ~/osu_bcast_modificado /vagrant/codigos_modificados/osu_bcast.c
-   ```
-3. Execute o benchmark variando o número de processos (`-np`) para 4, 8 e 16:
-   ```bash
-   mpirun -np 4 --hostfile ~/hostfile --oversubscribe --mca btl tcp,self --mca btl_tcp_if_include 192.168.56.0/24 --mca mpi_yield_when_idle 1 ~/osu_bcast_modificado
+   mpirun -np 4 --hostfile ~/hostfile --oversubscribe --mca btl tcp,self --mca btl_tcp_if_include enp0s8 --mca mpi_yield_when_idle 1 /usr/local/osu/libexec/osu-micro-benchmarks/mpi/collective/osu_bcast
    ```
 
-*Nota: Ao rodar o código modificado, você verá no terminal a identificação de qual VM está processando cada Rank, validando a teoria de escalonamento discutida no artigo.*
+*Nota: Ao rodar este comando, você verá no cabeçalho as linhas **[Virtual Box TOPO]** identificando qual VM está processando cada Rank.
 
 ### Explicação dos Parâmetros
 
-*   `-np [4, 8, 16]`: Define quantos processos MPI serão lançados.
-*   `--hostfile ~/hostfile`: Lista de IPs das máquinas virtuais criada pelo Vagrant.
+*   `-np 4`: Lança 4 processos MPI (1 por nó). Use 8 ou 16 para testar com outros processos.
+*   `--hostfile ~/hostfile`: Lista de IPs das máquinas virtuais.
 *   `--oversubscribe`: Permite rodar mais processos do que núcleos de CPU.
-*   `--mca btl tcp,self`: Força o uso da rede TCP para comunicação.
-*   `--mca btl_tcp_if_include 192.168.56.0/24`: Garante que o teste use apenas a rede isolada do VirtualBox, sem interferência do seu Wi-Fi ou Internet.
-*   `--mca mpi_yield_when_idle 1`: Faz as VMs "cederem" processamento quando ociosas, evitando que o seu computador trave.
+*   `--mca btl_tcp_if_include enp0s8`: Força o uso da interface de rede privada do VirtualBox (`enp0s8`).
+*   `--mca mpi_yield_when_idle 1`: Diz para o MPI não "segurar" o processador enquanto espera uma mensagem. Ele libera a CPU para outras tarefas do seu computador.
 
 ## 3. Dados e Visualização
 
-Os resultados das execuções ficam na pasta `dados/`. Para gerar os gráficos do artigo:
+Os resultados estão no arquivo `dados/dados_vbox.csv`. Para gerar os gráficos da Figura 1 do artigo:
 
-1. No seu computador, entre na pasta de scripts:
-   ```bash
-   cd virtualbox/scripts/
-   ```
-2. Execute o script (requer Python instalado):
-   ```bash
-   plotar_grafico_vbox.py
-   ```
-Os gráficos serão salvos na pasta `graficos/`.
+1. Instale as dependências: `pip install matplotlib pandas`
+2. Entre na pasta: `cd virtualbox/scripts/`
+3. Execute: `python3 plot_latencia.py`
 
-![Figura 1: VirtualBox:Desempenho de Broadcast no VirtualBox](graficos/chart_osu_bcast.png)
+Os gráficos serão gerados na pasta `virtualbox/graficos/`.
+
+![Desempenho de Broadcast no VirtualBox](graficos/chart_osu_bcast.png)
+
