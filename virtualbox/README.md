@@ -1,6 +1,6 @@
 # Ambiente Local (VirtualBox)
 
-Este diretório contém os recursos necessários para provisionar e testar um cluster local utilizando o **VirtualBox** e o **Vagrant**, conforme detalhado no artigo.
+Este diretório contém os recursos necessários para provisionar e testar um cluster local utilizando o **VirtualBox** e o **Vagrant**, conforme detalhado no artigo. Executamos o benchmark osu_bcast, que faz uso da operação coletiva Broadcast (MPI_Bcast).
 
 ## Requisitos de Sistema
 
@@ -42,7 +42,7 @@ O foco no ambiente local é a análise de latência em operações coletivas usa
 
 ### Como Rodar o Teste (Código Modificado)
 
-Para validar a distribuição dos processos entre os nós (auditoria de Rank vs Hostname), o OSU já foi compilada com as modificações.
+Para validar a distribuição dos processos entre os nós, o OSU já foi compilada com as modificações.
 
 1. Acesse o nó principal via SSH:
    ```bash
@@ -75,4 +75,3 @@ Os resultados estão no arquivo `dados/dados_vbox.csv`. Para gerar os gráficos 
 Os gráficos serão gerados na pasta `virtualbox/graficos/`.
 
 ![Desempenho de Broadcast no VirtualBox](graficos/chart_osu_bcast.png)
-
