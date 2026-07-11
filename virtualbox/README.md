@@ -33,8 +33,8 @@ O Vagrant fará o download do Ubuntu e configurará as ferramentas automaticamen
 Como o laboratório roda na sua máquina, é importante saber como liberar recursos (RAM e CPU) quando não estiver estudando:
 
 *   **Ligar o Cluster:** `vagrant up`
-*   **Desligar (Pausar):** `vagrant halt` (recupera a RAM do seu computador).
-*   **Excluir Tudo:** `vagrant destroy -f` (apaga as máquinas e discos virtuais).
+*   **Desligar (Pausar):** `vagrant halt`
+*   **Excluir Tudo:** `vagrant destroy -f`
 
 ## 2. Execução dos Experimentos
 
@@ -42,7 +42,7 @@ O foco no ambiente local é a análise de latência em operações coletivas usa
 
 ### Como Rodar o Teste (Código Modificado)
 
-Para validar a distribuição dos processos entre os nós, o OSU já foi compilada com as modificações.
+Para validar a distribuição dos processos entre os nós, faça o seguinte:
 
 1. Acesse o nó principal via SSH:
    ```bash
