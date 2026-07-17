@@ -1,33 +1,43 @@
 # Códigos-Fonte Modificados
 
-Este diretório contém as versões customizadas dos benchmarks **OSU Micro-Benchmarks (v7.3)** utilizados nos experimentos deste laboratório.
+Este diretório contém versões customizadas dos benchmarks OSU Micro-Benchmarks
+(v7.3) usados nos experimentos.
 
-## Motivação das Modificações
+## Por que modificamos
 
-Normalmente, esses testes mostram apenas a velocidade da rede. Modificamos o código para que ele também informe o nome da máquina onde cada tarefa está rodando. Isso ajuda a conferir se o MPI distribuiu os processos corretamente entre as máquinas virtuais ou os servidores na nuvem.
+Os benchmarks originais só mostram os tempos de execução. Nós adicionamos umas
+linhas de código para que, antes de rodar o teste, cada processo informe em qual
+máquina está rodando. Isso ajuda a conferir se o MPI distribuiu os processos
+corretamente entre os nós.
 
-## Arquivos Modificados
+## Arquivos
 
 ### 1. `osu_bcast.c`
-- **Alteração:** Inserção de um bloco de código após a inicialização do ambiente MPI (`MPI_Init`).
-- **Funcionalidade:** 
-  - Captura o nome da máquina (`gethostname`).
-  - Implementa uma barreira de sincronização (`MPI_Barrier`) para garantir que todos os nós estejam prontos.
-  - Imprime a tag `[Virtual Box TOPO]` seguida do Rank e do Hostname correspondente.
-- **Objetivo:** Confirmar visualmente a distribuição dos processos nas 4 VMs do cluster local antes do início da coleta de dados.
+
+- **O que foi feito:** Depois do `MPI_Init`, adicionamos código que pega o nome
+  da máquina (`gethostname`), sincroniza todos os processos (`MPI_Barrier`) e
+  imprime o Rank e o Hostname de cada um.
+- **No terminal aparece:** `[Virtual Box TOPO] Rank 0 -> node1`
+- **Pra quê:** Confirmar que os processos estão distribuídos nas 4 VMs antes de
+  começar a medir.
 
 ### 2. `osu_latency.c`
-- **Alteração:** Implementação de lógica similar de identificação de host.
-- **Funcionalidade:** Exibe o mapeamento dos dois processos envolvidos no teste *ping-pong*.
-- **Objetivo:** Validar o cenário de execução inter-regional na AWS, garantindo que o Rank 0 esteja na Virgínia e o Rank 1 no Oregon (ou vice-versa), conforme definido no `hostfile`.
 
-## Como Compilar
+- **O que foi feito:** Mesma lógica de identificação de host.
+- **Pra quê:** Confirmar que, no teste AWS, o Rank 0 está na Virgínia e o
+  Rank 1 no Oregon (ou vice-versa).
 
-Para utilizar estas versões modificadas, substitua os arquivos originais nos diretórios do Osu Benchmark e proceda com a compilação padrão:
+## Importante
 
-```bash
+Essas modificações só adicionam prints no início da execução. A parte que mede
+os tempos continua igual ao código original — não mexemos na lógica de medição.
+
+## Como compilar
+
+Substitua os arquivos originais nos diretórios do OSU Benchmark e compile:
+
+```
 ./configure CC=mpicc --prefix=/usr/local
 make
 sudo make install
 ```
-
