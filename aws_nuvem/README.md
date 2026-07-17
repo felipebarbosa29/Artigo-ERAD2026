@@ -64,5 +64,5 @@ de 28,27 ms até 87,17 ms.
 
 ## Dados e Scripts
 
-Os dados brutos estão em `dados/` e o script que gera o gráfico está em
+Os dados estão em `dados/` e o script que gera o gráfico está em
 `scripts/`.
