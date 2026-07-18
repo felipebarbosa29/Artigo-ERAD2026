@@ -5,7 +5,7 @@ Este guia descreve como utilizar o Vagrant para criar um cluster de 4 nós de fo
 ## 1. Por que usar Automação (IaC)?
 A configuração manual de 4 máquinas virtuais é demorada e sujeita a erros (IPs errados, falta de bibliotecas). O Vagrant resolve isso através de um script (`Vagrantfile`) que define toda a infraestrutura como código.
 
-## 2. Orçamento de Memória (Crucial para 8 GB RAM)
+## 2. Gerenciamento de Recursos
 Este laboratório foi projetado para rodar em computadores comuns de alunos da UNIVESP. O cálculo de viabilidade é:
 *   **Sistema Hospedeiro (Windows):** 2,0 GB
 *   **Cluster (4 VMs x 1 GB):** 4,0 GB
@@ -14,7 +14,7 @@ Este laboratório foi projetado para rodar em computadores comuns de alunos da U
 
 Isso deixa uma margem de segurança de **1,5 GB** em máquinas com 8 GB de RAM, permitindo que o aluno navegue no material de aula enquanto o cluster executa.
 
-## 3. Comandos Rápidos
+## 3. Comandos:
 Para subir o cluster completo:
 ```bash
 vagrant up
