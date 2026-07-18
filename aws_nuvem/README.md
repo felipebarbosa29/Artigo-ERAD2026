@@ -11,29 +11,42 @@ Criamos duas instâncias `t2.micro` (1 vCPU, 1 GB de RAM) em regiões diferentes
 
 A distância entre elas é de aproximadamente 4.000 km. Executamos o benchmark `osu_latency`, que funciona no modelo ping-pong: um processo envia uma mensagem (`MPI_Send`) e o outro devolve (`MPI_Recv`). O tempo reportado é a média de 100 iterações para cada tamanho de mensagem.
 
+## 💡 Glossário de Componentes AWS
+
+Para facilitar o entendimento, veja o que cada componente faz neste laboratório:
+
+| Componente | O que é? | Função neste Laboratório |
+| :--- | :--- | :--- |
+| **VPC (Virtual Private Cloud)** | Rede privada isolada. | Garante isolamento para o tráfego do MPI. |
+| **Subnet (Sub-rede)** | Divisão da VPC. | Onde as instâncias são hospedadas. |
+| **Internet Gateway (IGW)** | Porta de entrada/saída. | Permite seu acesso via SSH às instâncias. |
+| **Route Table** | Regras de tráfego. | Direciona dados entre as regiões via Peering. |
+| **VPC Peering** | Conexão entre VPCs. | Conecta Virgínia e Oregon de forma privada. |
+| **Security Group (SG)** | Firewall virtual. | Libera portas TCP (MPI) e SSH (22). |
+| **EC2 Instance** | Servidor virtual. | São os nós do cluster onde o MPI roda. |
+
+---
+
 ## Configuração de Infraestrutura (Passo a Passo)
 
-Para que o laboratório funcione, a rede deve ser configurada manualmente para permitir a comunicação inter-regional privada.
-
 ### 1. VPC (Virtual Private Cloud)
-Crie uma VPC em cada região com blocos CIDR distintos para evitar conflitos:
+Crie uma VPC em cada região com blocos CIDR distintos:
 - **Virgínia:** `10.0.0.0/16`
 - **Oregon:** `10.1.0.0/16`
-*Certifique-se de criar uma Subnet pública e um Internet Gateway anexado para permitir o acesso SSH.*
+*Crie uma Subnet pública e um Internet Gateway anexado.*
 
 ### 2. VPC Peering
-O Peering conecta as duas redes de forma privada:
 1. Na Virgínia, solicite o **Peering Connection** para a VPC do Oregon.
 2. No Oregon, aceite a solicitação.
 3. **Rotas:** Em cada região, adicione uma rota na *Route Table* apontando o CIDR da outra região para o ID do Peering (`pcx-xxxx`).
 
 ### 3. Security Groups (Firewall)
-Configure as regras de entrada para permitir o tráfego do MPI:
+Configure as regras de entrada:
 - **SSH (Porta 22):** Liberado para o seu IP.
 - **TCP (Portas 1024-65535):** Liberado para o CIDR da VPC oposta (ex: na Virgínia, libere para `10.1.0.0/16`).
 
 ### 4. Configuração das Instâncias (Amazon Linux 2023)
-Após subir as instâncias, instale as dependências:
+Instale as dependências após o acesso SSH:
 ```bash
 sudo dnf update -y
 sudo dnf install -y gcc gcc-c++ make openmpi openmpi-devel
@@ -42,7 +55,9 @@ source ~/.bashrc
 ```
 
 ### 5. Chaves SSH
-Gere uma chave no nó da Virgínia (`ssh-keygen`) e adicione o conteúdo da `id_rsa.pub` ao arquivo `authorized_keys` no nó do Oregon para permitir o acesso sem senha.
+Gere a chave na Virgínia (`ssh-keygen`) e adicione a `id_rsa.pub` ao arquivo `authorized_keys` no Oregon.
+
+---
 
 ## Como rodar o teste
 
@@ -57,9 +72,9 @@ mpirun --hostfile hostfile_aws \
 ```
 
 ### Parâmetros:
-- `--mca pml ob1`: Seleciona a camada de mensagens ponto a ponto.
+- `--mca pml ob1`: Camada de mensagens ponto a ponto.
 - `--mca btl tcp,self`: Usa TCP para rede e comunicação interna.
-- `--mca btl_tcp_disable_family IPv6`: Desabilita IPv6 (as VPCs usam só IPv4).
+- `--mca btl_tcp_disable_family IPv6`: Desabilita IPv6.
 
 ## Resultados
 
@@ -72,4 +87,4 @@ mpirun --hostfile hostfile_aws \
 
 ## Dados e Scripts
 
-Os dados estão na pasta `dados/` e o script Python utilizado para processar os resultados e gerar o gráfico comparativo está em `scripts/`.
+Os dados estão em `dados/` e o script de geração de gráficos em `scripts/`.
