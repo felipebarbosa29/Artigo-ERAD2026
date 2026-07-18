@@ -11,7 +11,7 @@ Criamos duas instâncias `t2.micro` (1 vCPU, 1 GB de RAM) em regiões diferentes
 
 A distância entre elas é de aproximadamente 4.000 km. Executamos o benchmark `osu_latency`, que funciona no modelo ping-pong: um processo envia uma mensagem (`MPI_Send`) e o outro devolve (`MPI_Recv`). O tempo reportado é a média de 100 iterações para cada tamanho de mensagem.
 
-## 💡 Glossário de Componentes AWS
+## Glossário de Componentes AWS
 
 Para facilitar o entendimento, veja o que cada componente faz neste laboratório:
 
