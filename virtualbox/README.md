@@ -24,7 +24,7 @@ códigos modificados durante a compilação.
 
 ### Como subir o ambiente
 
-1. Abra o PowerShell como Administrador e navegue até esta pasta.
+1. Abra o PowerShell como Administrador e navegue até esta pasta onde está o Vagranfile.
 2. Execute:
 
 ```
@@ -36,7 +36,7 @@ Aguarde a conclusão dos 4 nós (node1, node2, node3, node4).
 
 ### Gerenciando o Laboratório
 
-Como o laboratório roda na sua máquina, é bom saber como liberar recursos:
+Principais comando para gerenciar o ambiente:
 
 - **Ligar:** `vagrant up`
 - **Desligar:** `vagrant halt`
