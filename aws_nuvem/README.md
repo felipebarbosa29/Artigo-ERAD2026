@@ -27,14 +27,14 @@ Para facilitar o entendimento, veja o que cada componente faz neste laboratório
 
 | Componente | O que é? | Função neste Laboratório |
 | :--- | :--- | :--- |
-| **VPC (Virtual Private Cloud)** | Rede privada isolada. | Garante isolamento para o tráfego do MPI. |
-| **Subnet (Sub-rede)** | Divisão da VPC. | Onde as instâncias são hospedadas. |
-| **Internet Gateway (IGW)** | Porta de entrada/saída. | Permite seu acesso via SSH às instâncias. |
-| **Route Table** | Regras de tráfego. | Direciona dados entre as regiões via Peering. |
-| **VPC Peering** | Conexão entre VPCs. | Conecta Virgínia e Oregon de forma privada. |
-| **Security Group (SG)** | Firewall virtual. | Libera portas TCP (MPI) e SSH (22). |
-| **EC2 Instance** | Servidor virtual. | São os nós do cluster onde o MPI roda. |
-| **CIDR** | Notação de faixa de IPs. | Define quais IPs a rede usa (ex: 10.0.0.0/16 = IPs de 10.0.0.1 até 10.0.255.254). |
+| **VPC (Virtual Private Cloud)** | Rede privada isolada | Garante isolamento para o tráfego do MPI |
+| **Subnet (Sub-rede)** | Divisão da VPC | Onde as instâncias são hospedadas |
+| **Internet Gateway (IGW)** | Porta de entrada/saída | Permite seu acesso via SSH às instâncias |
+| **Route Table** | Regras de tráfego | Direciona dados entre as regiões via Peering |
+| **VPC Peering** | Conexão entre VPCs | Conecta Virgínia e Oregon de forma privada |
+| **Security Group (SG)** | Firewall virtual | Libera portas TCP (MPI) e SSH (22) |
+| **EC2 Instance** | Servidor virtual | São os nós do cluster onde o MPI roda |
+| **CIDR** | Notação de faixa de IPs | Define quais IPs a rede usa (ex: 10.0.0.0/16 = IPs de 10.0.0.1 até 10.0.255.254). |
 
 ---
 
